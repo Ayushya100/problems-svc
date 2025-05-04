@@ -1,0 +1,39 @@
+{
+  "name": "problems-svc",
+  "version": "1.0.0",
+  "description": "Welcome to the GitHub repository for **Problems SVC** – This service is responsible for managing DSA and real-world API problems. It provides functionality to create, retrieve, and manage coding challenges and API-based problem definitions, which are later solved by users via dedicated execution engines.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js",
+    "start-appmap": "npx appmap-node nodemon src/index.js",
+    "start": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "format": "prettier --write \"src/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ayushya100/problems-svc.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "javascript",
+    "problems-svc"
+  ],
+  "author": "Ayushya Jaiswal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ayushya100/problems-svc/issues"
+  },
+  "homepage": "https://github.com/Ayushya100/problems-svc#readme",
+  "devDependencies": {
+    "appmap-node": "^2.24.3",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  }
+}
