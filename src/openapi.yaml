@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Problems Service
+  version: 1.0.0
+  description: The Problems Service is responsible for managing dsa and api problems.
+    DSA Problem Management - Create and manage traditional data structures and algorithms problems with test cases and constraints.
+    API Problem Management - Create API challenges with input/output contracts, expected implementations, and evaluation criteria.
+    Category and Difficulty Tagging - Classify problems based on difficulty levels, types, and categories for better discoverability.
+
+servers:
+  - url: /problems-svc/api/v1.0
+    description: Local development server
+
+components:
+  schemas:
+    healthCheckData:
+      title: Schema for Health Check Data
+      type: object
+      properties:
+        uptime:
+          type: string
+        timestamp:
+          type: string
+        hostname:
+          type: string
+
+    healthCheckSuccessResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/healthCheckData'
+
+    internalServerErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 500
+        type:
+          type: string
+          example: 'Internal Server Error'
+        message:
+          type: string
+          example: 'Internal Server Error'
+        devMessage:
+          type: string
+          example: 'Internal Server Error'
+        error:
+          type: array
+        data:
+          type: array
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Service Health Check
+      description: An API to check the health status of the service.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/healthCheckSuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
