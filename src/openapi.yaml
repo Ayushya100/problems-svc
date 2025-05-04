@@ -13,6 +13,21 @@ servers:
 
 components:
   schemas:
+    registerProblemTypePayload:
+      type: object
+      properties:
+        typeCode:
+          type: string
+          description: Type Code
+          minLength: 1
+        typeDesc:
+          type: string
+          description: Type Description
+          minLength: 1
+      required:
+        - typeCode
+        - typeDesc
+
     healthCheckData:
       title: Schema for Health Check Data
       type: object
@@ -23,6 +38,23 @@ components:
           type: string
         hostname:
           type: string
+
+    registerProblemTypeResponseData:
+      title: Schema for Register Problem Type Response Data
+      type: object
+      properties:
+        id:
+          type: string
+        typeCode:
+          type: string
+          example: Type Code
+        typeDesc:
+          type: string
+          example: Type Description
+      required:
+        - id
+        - typeCode
+        - typeDesc
 
     healthCheckSuccessResponse:
       type: object
@@ -44,6 +76,115 @@ components:
           example: true
         data:
           $ref: '#/components/schemas/healthCheckData'
+
+    registerProblemTypeResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'REQUEST_COMPLETED'
+        message:
+          type: string
+          example: 'Request Completed'
+        devMessage:
+          type: string
+          example: 'Request Completed'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/registerProblemTypeResponseData'
+      # required:
+      #   - statusCode
+      #   - type
+      #   - message
+      #   - devMessage
+      #   - success
+      #   - data
+
+    unauthorizedResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 401
+        type:
+          type: string
+          example: 'UNAUTHORIZED'
+        message:
+          type: string
+          example: 'Unauthorized'
+        devMessage:
+          type: string
+          example: Unauthorized access. Could not proceed with the request.
+        error:
+          type: array
+        data:
+          type: array
+
+    badRequestResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 400
+        type:
+          type: string
+          example: 'BAD_REQUEST'
+        message:
+          type: string
+          example: 'Bad Request'
+        devMessage:
+          type: string
+          example: Bad Request. Required resource does not exist.
+        error:
+          type: array
+        data:
+          type: array
+
+    notFound:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 404
+        type:
+          type: string
+          example: 'NOT_FOUND'
+        message:
+          type: string
+          example: 'Resource Not Found'
+        devMessage:
+          type: string
+          example: Not Found. Requested resource does not exist.
+        error:
+          type: array
+        data:
+          type: array
+
+    userAlreadyExist:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 409
+        type:
+          type: string
+          example: 'CONFLICT'
+        message:
+          type: string
+          example: 'Resource already exist'
+        devMessage:
+          type: string
+          example: 'Resource already exist'
+        error:
+          type: array
+        data:
+          type: array
 
     internalServerErrorResponse:
       type: object
@@ -80,6 +221,55 @@ paths:
                 $ref: '#/components/schemas/healthCheckSuccessResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /problem-type:
+    post:
+      operationId: registerProblemType
+      summary: Register New Problem Type
+      description: An API to register new problem type in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerProblemTypePayload'
+      responses:
+        '201':
+          description: REQUEST_COMPLETED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registerProblemTypeResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAlreadyExist'
+        '500':
+          description: INTERNAL_SERVER_ERROR
           content:
             application/json:
               schema:

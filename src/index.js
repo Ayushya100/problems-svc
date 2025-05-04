@@ -2,7 +2,7 @@
 
 import { Service } from 'common-node-lib';
 import dotenv from 'dotenv';
-import { serviceConfig, USERS_API } from './constants.js';
+import { serviceConfig, PROBLEMS_API } from './constants.js';
 import routes from './routes/index.js';
 
 dotenv.config({
@@ -11,10 +11,12 @@ dotenv.config({
 
 class ProblemService extends Service {
   registerPublicEndpoints() {
-    this.app.get(`${USERS_API}/health`, routes.healthCheck);
+    this.app.get(`${PROBLEMS_API}/health`, routes.healthCheck);
   }
 
-  registerServiceEndpoints() {}
+  registerServiceEndpoints() {
+    this.app.post(`${PROBLEMS_API}/problem-type`, routes.problemType.registerProblemType);
+  }
 }
 
 serviceConfig.HOST = process.env.HOST || serviceConfig.HOST;
