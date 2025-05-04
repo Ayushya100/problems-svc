@@ -1,6 +1,6 @@
 'use strict';
 
-const USERS_API = '/problems-svc/api/v1.0';
+const PROBLEMS_API = '/problems-svc/api/v1.0';
 
 const serviceConfig = {
   serviceName: 'problems-svc',
@@ -9,4 +9,4 @@ const serviceConfig = {
   PROTOCOL: 'http',
 };
 
-export { USERS_API, serviceConfig };
+export { PROBLEMS_API, serviceConfig };
