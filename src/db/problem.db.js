@@ -28,4 +28,9 @@ const getTypeInfoById = async (typeId) => {
   return exec(query, params);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById };
+const getAllTypeInfo = async () => {
+  const query = `SELECT ID, TYPE_CD, TYPE_DESC FROM PROBLEM_TYPE WHERE IS_DELETED = false;`;
+  return exec(query);
+};
+
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo };
