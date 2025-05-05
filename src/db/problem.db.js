@@ -33,4 +33,12 @@ const getAllTypeInfo = async () => {
   return exec(query);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo };
+const updateTypeInfoById = async (payload, userId, typeId) => {
+  const query = `UPDATE PROBLEM_TYPE SET TYPE_DESC = ?, MODIFIED_BY = ?
+    WHERE ID = ? AND IS_DELETED = false;`;
+  const params = [payload.typeDesc, userId, typeId];
+
+  return exec(query, params);
+};
+
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById };
