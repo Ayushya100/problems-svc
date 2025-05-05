@@ -15,7 +15,21 @@ class ProblemService extends Service {
   }
 
   registerServiceEndpoints() {
+    // Problem Types Routes
     this.app.post(`${PROBLEMS_API}/problem-type`, routes.problemType.registerProblemType);
+    this.app.get(`${PROBLEMS_API}/problem-type`, routes.problemType.getProblemType);
+    this.app.get(`${PROBLEMS_API}/problem-type/:typeId`, routes.problemType.getProblemType);
+
+    // Problem Routes
+    // this.app.post(`${PROBLEMS_API}/problem`, );
+    // this.app.get(`${PROBLEMS_API}/problem`, );
+    // this.app.get(`${PROBLEMS_API}/problem/:problemId`, );
+    // this.app.put(`${PROBLEMS_API}/problem/:problemId`, );
+    // this.app.delete(`${PROBLEMS_API}/problem/:problemId`, );
+    // this.app.get(`${PROBLEMS_API}/problem/solved`, );
+    // this.app.get(`${PROBLEMS_API}/problem/solved/:problemId`, );
+
+    // constraints, codesnipets - JSON, referenceSolutions - JSON
   }
 }
 

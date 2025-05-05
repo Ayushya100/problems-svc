@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
-import { getTypeInfoById } from '../../db/index.js';
+import { getTypeInfoById, getAllTypeInfo } from '../../db/index.js';
 
 const log = logger('Controller: get-problem-type');
 
@@ -53,4 +53,48 @@ const getTypeById = async (typeId) => {
   }
 };
 
-export { getTypeById };
+const getAllProblemTypes = async () => {
+  try {
+    log.info('Controller function to fetch all the problem types from system initiated');
+    log.info('Call db query to fetch all problem types from db');
+    let typeDtl = await getAllTypeInfo();
+    if (typeDtl.rowCount === 0) {
+      log.info('No Problem type available to display');
+      return {
+        status: 204,
+        message: 'No problem type found',
+        data: [],
+        isValid: true,
+      };
+    }
+
+    typeDtl = typeDtl.rows;
+    const data = typeDtl.map((type) => {
+      return {
+        id: convertIdToPrettyString(type.id),
+        typeCode: type.type_cd,
+        typeDesc: type.type_desc,
+      };
+    });
+
+    log.success('Problem types fetch operation completed successfully');
+    return {
+      status: 200,
+      message: 'Problem type fetched successfully',
+      data: data,
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('Error while fetching all problems from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching all problems from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+export { getTypeById, getAllProblemTypes };

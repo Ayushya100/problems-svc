@@ -12,6 +12,16 @@ servers:
     description: Local development server
 
 components:
+  parameters:
+    TypeIdParam:
+      name: typeId
+      description: The ID of problem type to verify
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[A-F0-9]{8}:[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{11}'
+
   schemas:
     registerProblemTypePayload:
       type: object
@@ -39,8 +49,8 @@ components:
         hostname:
           type: string
 
-    registerProblemTypeResponseData:
-      title: Schema for Register Problem Type Response Data
+    getProblemTypeResponseData:
+      title: Schema for Get Problem Type Response Data
       type: object
       properties:
         id:
@@ -51,6 +61,10 @@ components:
         typeDesc:
           type: string
           example: Type Description
+        createdDate:
+          type: string
+        modifiedDate:
+          type: string
       required:
         - id
         - typeCode
@@ -97,14 +111,94 @@ components:
           example: true
         data:
           type: object
-          $ref: '#/components/schemas/registerProblemTypeResponseData'
-      # required:
-      #   - statusCode
-      #   - type
-      #   - message
-      #   - devMessage
-      #   - success
-      #   - data
+          $ref: '#/components/schemas/getProblemTypeResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    getAllProblemTypeResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/getProblemTypeResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    getProblemTypeByIdResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/getProblemTypeResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    noContentResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 204
+        type:
+          type: string
+          example: 'CONTENT_NOT_AVAILABLE'
+        message:
+          type: string
+          example: 'No content available'
+        devMessage:
+          type: string
+          example: 'No content available'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
 
     unauthorizedResponse:
       type: object
@@ -141,6 +235,26 @@ components:
         devMessage:
           type: string
           example: Bad Request. Required resource does not exist.
+        error:
+          type: array
+        data:
+          type: array
+
+    forbiddenResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 403
+        type:
+          type: string
+          example: 'FORBIDDEN'
+        message:
+          type: string
+          example: 'Forbidden'
+        devMessage:
+          type: string
+          example: Forbidden access. Could not proceed with the request.
         error:
           type: array
         data:
@@ -256,6 +370,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
         '404':
           description: NOT_FOUND
           content:
@@ -268,6 +388,93 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userAlreadyExist'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+    get:
+      operationId: getAllProblemType
+      summary: Get all Problem Type
+      description: An API to retrieve all problem types from the system.
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllProblemTypeResponse'
+        '204':
+          description: CONTENT_NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noContentResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /problem-type/{typeId}:
+    get:
+      operationId: getProblemTypeById
+      summary: Get Problem Type by ID
+      description: An API to retrieve the problem type info for requested ID.
+      parameters:
+        - $ref: '#/components/parameters/TypeIdParam'
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getProblemTypeByIdResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
         '500':
           description: INTERNAL_SERVER_ERROR
           content:
