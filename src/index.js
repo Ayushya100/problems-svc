@@ -21,6 +21,9 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/problem-type/:typeId`, routes.problemType.getProblemType);
     this.app.put(`${PROBLEMS_API}/problem-type/:typeId`, routes.problemType.updateProblemType);
 
+    // Tags Routes
+    this.app.post(`${PROBLEMS_API}/tag`, routes.tags.registerTags);
+
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
     // this.app.get(`${PROBLEMS_API}/problem`, );
