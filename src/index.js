@@ -25,6 +25,7 @@ class ProblemService extends Service {
     this.app.post(`${PROBLEMS_API}/tag`, routes.tags.registerTags);
     this.app.get(`${PROBLEMS_API}/tag`, routes.tags.getTagInfo);
     this.app.get(`${PROBLEMS_API}/tag/:tagId`, routes.tags.getTagInfo);
+    this.app.put(`${PROBLEMS_API}/tag/:tagId`, routes.tags.updateTags);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
