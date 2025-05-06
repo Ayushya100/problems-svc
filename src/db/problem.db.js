@@ -41,4 +41,27 @@ const updateTypeInfoById = async (payload, userId, typeId) => {
   return exec(query, params);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById };
+const isTagExist = async (tagCd) => {
+  const query = `SELECT ID FROM TAGS WHERE IS_DELETED = false AND TAG_CD = ?;`;
+  const params = [tagCd];
+  return exec(query, params);
+};
+
+const registerNewTagInfo = async (tagCd, tagDesc) => {
+  const query = `INSERT INTO TAGS (TAG_CD, TAG_DESC)
+    VALUES (?, ?)
+    RETURNING ID;`;
+  const params = [tagCd, tagDesc];
+
+  return exec(query, params);
+};
+
+const getTagInfoById = async (tagId) => {
+  const query = `SELECT ID, TAG_CD, TAG_DESC, CREATED_DATE, MODIFIED_DATE FROM TAGS
+    WHERE IS_DELETED = false AND ID = ?;`;
+  const params = [tagId];
+
+  return exec(query, params);
+};
+
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById };

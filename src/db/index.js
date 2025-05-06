@@ -1,5 +1,5 @@
 'use strict';
 
-import { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById } from './problem.db.js';
+import { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById } from './problem.db.js';
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById };
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById };
