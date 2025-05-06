@@ -64,4 +64,9 @@ const getTagInfoById = async (tagId) => {
   return exec(query, params);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById };
+const getTags = async () => {
+  const query = `SELECT ID, TAG_CD, TAG_DESC FROM TAGS WHERE IS_DELETED = false;`;
+  return exec(query);
+};
+
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags };

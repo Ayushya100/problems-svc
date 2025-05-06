@@ -23,6 +23,8 @@ class ProblemService extends Service {
 
     // Tags Routes
     this.app.post(`${PROBLEMS_API}/tag`, routes.tags.registerTags);
+    this.app.get(`${PROBLEMS_API}/tag`, routes.tags.getTagInfo);
+    this.app.get(`${PROBLEMS_API}/tag/:tagId`, routes.tags.getTagInfo);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
