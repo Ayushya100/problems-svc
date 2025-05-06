@@ -69,4 +69,12 @@ const getTags = async () => {
   return exec(query);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags };
+const updateTagInfo = async (payload, userId, tagId) => {
+  const query = `UPDATE TAGS SET TAG_DESC = ?, MODIFIED_BY = ?
+    WHERE ID = ? AND IS_DELETED = false;`;
+  const params = [payload.tagDesc, userId, tagId];
+
+  return exec(query, params);
+};
+
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags, updateTagInfo };

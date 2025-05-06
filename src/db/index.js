@@ -10,6 +10,7 @@ import {
   registerNewTagInfo,
   getTagInfoById,
   getTags,
+  updateTagInfo,
 } from './problem.db.js';
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags };
+export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags, updateTagInfo };

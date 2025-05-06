@@ -4,7 +4,7 @@ import { convertPrettyStringToId, logger } from 'common-node-lib';
 import { updateTypeInfoById } from '../../db/index.js';
 import { getTypeById } from './getProblemType.controller.js';
 
-const log = logger('Controller: register-problem-type');
+const log = logger('Controller: update-problem-type');
 
 const updateProblemTypeById = async (typeId, userId, typeDtl, payload) => {
   try {
