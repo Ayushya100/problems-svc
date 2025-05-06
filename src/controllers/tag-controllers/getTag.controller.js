@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
-import { getTagInfoById } from '../../db/index.js';
+import { getTagInfoById, getTags } from '../../db/index.js';
 
 const log = logger('Controller: get-tags');
 
@@ -53,4 +53,48 @@ const getTagById = async (tagId) => {
   }
 };
 
-export { getTagById };
+const getAllTagInfo = async () => {
+  try {
+    log.info('Controller function to fetch all the tag info from system initiated');
+    log.info('Call db query to fetch all tags from db');
+    let tagDtl = await getTags();
+    if (tagDtl.rowCount === 0) {
+      log.info('No tag info available to display');
+      return {
+        status: 204,
+        message: 'No tag found',
+        data: [],
+        isValid: false,
+      };
+    }
+
+    tagDtl = tagDtl.rows;
+    const data = tagDtl.map((tag) => {
+      return {
+        id: convertIdToPrettyString(tag.id),
+        tagCode: tag.tag_cd,
+        tagDesc: tag.tag_desc,
+      };
+    });
+
+    log.success('Tags fetch operation completed successfully');
+    return {
+      status: 200,
+      message: 'Tags fetched successfully',
+      data: data,
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('Error while fetching tag info from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching tag info from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+export { getTagById, getAllTagInfo };
