@@ -19,11 +19,11 @@ const registerNewType = async (payload) => {
   return exec(query, params);
 };
 
-const getTypeInfoById = async (typeId) => {
+const getTypeInfoById = async (typeId, deletedRecord) => {
   const query = `SELECT ID, TYPE_CD, TYPE_DESC, EXECUTOR, CORE, CREATED_DATE, MODIFIED_DATE
         FROM PROBLEM_TYPE
-        WHERE IS_DELETED = false AND ID = ?;`;
-  const params = [typeId];
+        WHERE IS_DELETED = ? AND ID = ?;`;
+  const params = [deletedRecord, typeId];
 
   return exec(query, params);
 };
@@ -77,4 +77,24 @@ const updateTagInfo = async (payload, userId, tagId) => {
   return exec(query, params);
 };
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags, updateTagInfo };
+const deleteProblemTypeInfoById = async (typeId, userId) => {
+  const query = `UPDATE PROBLEM_TYPE SET IS_DELETED = true, MODIFIED_BY = ?
+    WHERE ID = ?;`;
+  const params = [userId, typeId];
+
+  return exec(query, params);
+};
+
+export {
+  isProblemExistAvailable,
+  registerNewType,
+  getTypeInfoById,
+  getAllTypeInfo,
+  updateTypeInfoById,
+  isTagExist,
+  registerNewTagInfo,
+  getTagInfoById,
+  getTags,
+  updateTagInfo,
+  deleteProblemTypeInfoById,
+};
