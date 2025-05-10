@@ -17,6 +17,7 @@ import {
   registerNewLanguage,
   getLangInfoById,
   getAllLanguages,
+  updateLanguageInfo,
 } from './problem.db.js';
 
 export {
@@ -36,4 +37,5 @@ export {
   registerNewLanguage,
   getLangInfoById,
   getAllLanguages,
+  updateLanguageInfo,
 };

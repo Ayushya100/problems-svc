@@ -27,6 +27,7 @@ const getLangById = async (langId, deletedRecord = false) => {
     langDtl = langDtl.rows[0];
     langDtl = {
       id: convertIdToPrettyString(langDtl.id),
+      typeId: convertIdToPrettyString(langDtl.type_id),
       langCode: langDtl.lang_cd,
       language: langDtl.language,
       typeDesc: langDtl.type_desc,

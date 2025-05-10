@@ -109,7 +109,7 @@ const registerNewLanguage = async (typeId, langCode, language) => {
 };
 
 const getLangInfoById = async (langId, deletedRecord) => {
-  const query = `SELECT S.ID, S.LANG_CD, S.LANGUAGE, P.TYPE_DESC, S.CREATED_DATE, S.MODIFIED_DATE
+  const query = `SELECT S.ID, S.TYPE_ID, S.LANG_CD, S.LANGUAGE, P.TYPE_DESC, S.CREATED_DATE, S.MODIFIED_DATE
     FROM SUPPORT_LANGUAGE S
     INNER JOIN PROBLEM_TYPE P ON P.ID = S.TYPE_ID
     WHERE S.ID = ? AND S.IS_DELETED = ?;`;
@@ -121,6 +121,14 @@ const getLangInfoById = async (langId, deletedRecord) => {
 const getAllLanguages = async () => {
   const query = `SELECT ID, LANG_CD, LANGUAGE FROM SUPPORT_LANGUAGE WHERE IS_DELETED = false;`;
   return exec(query);
+};
+
+const updateLanguageInfo = async (langId, userId, payload) => {
+  const query = `UPDATE SUPPORT_LANGUAGE SET TYPE_ID = ?, LANGUAGE = ?, MODIFIED_BY = ?
+    WHERE ID = ?`;
+  const params = [payload.typeId, payload.language, userId, langId];
+
+  return exec(query, params);
 };
 
 export {
@@ -140,4 +148,5 @@ export {
   registerNewLanguage,
   getLangInfoById,
   getAllLanguages,
+  updateLanguageInfo,
 };
