@@ -13,6 +13,9 @@ import {
   updateTagInfo,
   deleteProblemTypeInfoById,
   deleteTagInfoById,
+  isLanguageExistAvailable,
+  registerNewLanguage,
+  getLangInfoById,
 } from './problem.db.js';
 
 export {
@@ -28,4 +31,7 @@ export {
   updateTagInfo,
   deleteProblemTypeInfoById,
   deleteTagInfoById,
+  isLanguageExistAvailable,
+  registerNewLanguage,
+  getLangInfoById,
 };

@@ -2,8 +2,10 @@
 
 import problemTypeController from './problem-type-controllers/index.js';
 import tagController from './tag-controllers/index.js';
+import languageController from './support-language-controllers/index.js';
 
 export default {
   problemTypeController,
   tagController,
+  languageController,
 };

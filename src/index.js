@@ -29,6 +29,9 @@ class ProblemService extends Service {
     this.app.put(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.U'), routes.tags.updateTags);
     this.app.delete(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.D'), routes.tags.deleteTag);
 
+    // Support Language Routes
+    this.app.post(`${PROBLEMS_API}/language`, routes.language.registerSupportLanguage);
+
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
     // this.app.get(`${PROBLEMS_API}/problem`, );

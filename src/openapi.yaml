@@ -90,6 +90,28 @@ components:
       required:
         - tagDesc
 
+    registerLanguagePayload:
+      type: object
+      properties:
+        typeId:
+          type: string
+          description: Type ID
+          minLength: 30
+        langCode:
+          type: string
+          description: Language Code
+          minLength: 1
+        language:
+          type: string
+          description: Language Detail
+          minLength: 1
+        metadata:
+          type: string
+      required:
+        - typeId
+        - langCode
+        - language
+
     healthCheckData:
       title: Schema for Health Check Data
       type: object
@@ -151,6 +173,23 @@ components:
         - id
         - tagCode
         - tagDesc
+
+    getLanguageResponseData:
+      title: Schema for retrieving Language Details
+      type: object
+      properties:
+        id:
+          type: string
+        langCode:
+          type: string
+        language:
+          type: string
+        typeCode:
+          type: string
+      required:
+        - id
+        - langCode
+        - language
 
     healthCheckSuccessResponse:
       type: object
@@ -266,7 +305,7 @@ components:
       properties:
         statusCode:
           type: integer
-          example: 200
+          example: 201
         type:
           type: string
           example: 'SUCCESS'
@@ -341,6 +380,35 @@ components:
         data:
           type: object
           $ref: '#/components/schemas/getTagResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    registerLanguageResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/getLanguageResponseData'
       required:
         - statusCode
         - type
@@ -974,6 +1042,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /language:
+    post:
+      operationId: registerSupportLanguage
+      summary: Register new Support Language
+      description: An API to register new support language in system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerLanguagePayload'
+      responses:
+        '201':
+          description: REQUEST_COMPLETED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registerLanguageResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAlreadyExist'
         '500':
           description: INTERNAL_SERVER_ERROR
           content:
