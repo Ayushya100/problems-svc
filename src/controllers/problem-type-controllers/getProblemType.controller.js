@@ -5,13 +5,13 @@ import { getTypeInfoById, getAllTypeInfo } from '../../db/index.js';
 
 const log = logger('Controller: get-problem-type');
 
-const getTypeById = async (typeId) => {
+const getTypeById = async (typeId, deletedRecord = false) => {
   try {
     log.info('Controller function to fetch problem type by id process initiated');
     typeId = convertPrettyStringToId(typeId);
 
     log.info(`Call db query to fetch type details for provided id: ${typeId}`);
-    let typeDtl = await getTypeInfoById(typeId);
+    let typeDtl = await getTypeInfoById(typeId, deletedRecord);
     if (typeDtl.rowCount === 0) {
       log.error('Problem type requested with the id does not exists in system');
       return {

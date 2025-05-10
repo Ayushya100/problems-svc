@@ -20,6 +20,7 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/problem/type`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
     this.app.get(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
     this.app.put(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.U'), routes.problemType.updateProblemType);
+    this.app.delete(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.D'), routes.problemType.deleteProblemType);
 
     // Tags Routes
     this.app.post(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.U'), routes.tags.registerTags);

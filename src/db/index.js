@@ -11,6 +11,19 @@ import {
   getTagInfoById,
   getTags,
   updateTagInfo,
+  deleteProblemTypeInfoById,
 } from './problem.db.js';
 
-export { isProblemExistAvailable, registerNewType, getTypeInfoById, getAllTypeInfo, updateTypeInfoById, isTagExist, registerNewTagInfo, getTagInfoById, getTags, updateTagInfo };
+export {
+  isProblemExistAvailable,
+  registerNewType,
+  getTypeInfoById,
+  getAllTypeInfo,
+  updateTypeInfoById,
+  isTagExist,
+  registerNewTagInfo,
+  getTagInfoById,
+  getTags,
+  updateTagInfo,
+  deleteProblemTypeInfoById,
+};
