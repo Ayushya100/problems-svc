@@ -11,16 +11,16 @@ const isProblemExistAvailable = async (typeCd) => {
 };
 
 const registerNewType = async (payload) => {
-  const query = `INSERT INTO PROBLEM_TYPE (TYPE_CD, TYPE_DESC)
-        VALUES(?, ?)
+  const query = `INSERT INTO PROBLEM_TYPE (TYPE_CD, TYPE_DESC, EXECUTOR)
+        VALUES(?, ?, ?)
         RETURNING ID;`;
-  const params = [payload.typeCode, payload.typeDesc];
+  const params = [payload.typeCode, payload.typeDesc, payload.executor];
 
   return exec(query, params);
 };
 
 const getTypeInfoById = async (typeId) => {
-  const query = `SELECT ID, TYPE_CD, TYPE_DESC, CREATED_DATE, MODIFIED_DATE
+  const query = `SELECT ID, TYPE_CD, TYPE_DESC, EXECUTOR, CORE, CREATED_DATE, MODIFIED_DATE
         FROM PROBLEM_TYPE
         WHERE IS_DELETED = false AND ID = ?;`;
   const params = [typeId];
@@ -29,14 +29,14 @@ const getTypeInfoById = async (typeId) => {
 };
 
 const getAllTypeInfo = async () => {
-  const query = `SELECT ID, TYPE_CD, TYPE_DESC FROM PROBLEM_TYPE WHERE IS_DELETED = false;`;
+  const query = `SELECT ID, TYPE_CD, TYPE_DESC, EXECUTOR FROM PROBLEM_TYPE WHERE IS_DELETED = false;`;
   return exec(query);
 };
 
 const updateTypeInfoById = async (payload, userId, typeId) => {
-  const query = `UPDATE PROBLEM_TYPE SET TYPE_DESC = ?, MODIFIED_BY = ?
+  const query = `UPDATE PROBLEM_TYPE SET TYPE_DESC = ?, EXECUTOR = ?, MODIFIED_BY = ?
     WHERE ID = ? AND IS_DELETED = false;`;
-  const params = [payload.typeDesc, userId, typeId];
+  const params = [payload.typeDesc, payload.executor, userId, typeId];
 
   return exec(query, params);
 };

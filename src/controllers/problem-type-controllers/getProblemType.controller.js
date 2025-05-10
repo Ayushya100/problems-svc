@@ -29,6 +29,8 @@ const getTypeById = async (typeId) => {
       id: convertIdToPrettyString(typeDtl.id),
       typeCode: typeDtl.type_cd,
       typeDesc: typeDtl.type_desc,
+      executor: typeDtl.executor,
+      core: typeDtl.core,
       createdDate: convertToNativeTimeZone(typeDtl.created_date),
       modifiedDate: convertToNativeTimeZone(typeDtl.modified_date),
     };
@@ -74,6 +76,7 @@ const getAllProblemTypes = async () => {
         id: convertIdToPrettyString(type.id),
         typeCode: type.type_cd,
         typeDesc: type.type_desc,
+        executor: type.executor,
       };
     });
 
