@@ -93,6 +93,31 @@ const deleteTagInfoById = async (tagId, userId) => {
   return exec(query, params);
 };
 
+const isLanguageExistAvailable = async (typeId, langCode) => {
+  const query = `SELECT ID FROM SUPPORT_LANGUAGE WHERE TYPE_ID = ? AND LANG_CD = ? AND IS_DELETED = false;`;
+  const params = [typeId, langCode];
+  return exec(query, params);
+};
+
+const registerNewLanguage = async (typeId, langCode, language) => {
+  const query = `INSERT INTO SUPPORT_LANGUAGE (TYPE_ID, LANG_CD, LANGUAGE)
+    VALUES (?, ?, ?)
+    RETURNING ID;`;
+  const params = [typeId, langCode, language];
+
+  return exec(query, params);
+};
+
+const getLangInfoById = async (langId, deletedRecord) => {
+  const query = `SELECT S.ID, S.LANG_CD, S.LANGUAGE, P.TYPE_DESC, S.CREATED_DATE, S.MODIFIED_DATE
+    FROM SUPPORT_LANGUAGE S
+    INNER JOIN PROBLEM_TYPE P ON P.ID = S.TYPE_ID
+    WHERE S.ID = ? AND S.IS_DELETED = ?;`;
+  const params = [langId, deletedRecord];
+
+  return exec(query, params);
+};
+
 export {
   isProblemExistAvailable,
   registerNewType,
@@ -106,4 +131,7 @@ export {
   updateTagInfo,
   deleteProblemTypeInfoById,
   deleteTagInfoById,
+  isLanguageExistAvailable,
+  registerNewLanguage,
+  getLangInfoById,
 };
