@@ -16,6 +16,7 @@ import {
   isLanguageExistAvailable,
   registerNewLanguage,
   getLangInfoById,
+  getAllLanguages,
 } from './problem.db.js';
 
 export {
@@ -34,4 +35,5 @@ export {
   isLanguageExistAvailable,
   registerNewLanguage,
   getLangInfoById,
+  getAllLanguages,
 };
