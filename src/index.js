@@ -27,6 +27,7 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
     this.app.get(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
     this.app.put(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.U'), routes.tags.updateTags);
+    this.app.delete(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.D'), routes.tags.deleteTag);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );

@@ -12,6 +12,7 @@ import {
   getTags,
   updateTagInfo,
   deleteProblemTypeInfoById,
+  deleteTagInfoById,
 } from './problem.db.js';
 
 export {
@@ -26,4 +27,5 @@ export {
   getTags,
   updateTagInfo,
   deleteProblemTypeInfoById,
+  deleteTagInfoById,
 };

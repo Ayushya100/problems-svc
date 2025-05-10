@@ -5,13 +5,13 @@ import { getTagInfoById, getTags } from '../../db/index.js';
 
 const log = logger('Controller: get-tags');
 
-const getTagById = async (tagId) => {
+const getTagById = async (tagId, deletedRecord = false) => {
   try {
     log.info('Controller function to fetch tag info by id process initiated');
     tagId = convertPrettyStringToId(tagId);
 
     log.info(`Call db query to fetch tag details for provided id: ${tagId}`);
-    let tagDtl = await getTagInfoById(tagId);
+    let tagDtl = await getTagInfoById(tagId, deletedRecord);
     if (tagDtl.rowCount === 0) {
       log.error('Tag info for requested id does not exists in system');
       return {
@@ -29,6 +29,7 @@ const getTagById = async (tagId) => {
       id: convertIdToPrettyString(tagDtl.id),
       tagCode: tagDtl.tag_cd,
       tagDesc: tagDtl.tag_desc,
+      core: tagDtl.core,
       createdDate: convertToNativeTimeZone(tagDtl.created_date),
       modifiedDate: convertToNativeTimeZone(tagDtl.modified_date),
     };
