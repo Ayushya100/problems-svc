@@ -33,6 +33,7 @@ class ProblemService extends Service {
     this.app.post(`${PROBLEMS_API}/language`, routes.language.registerSupportLanguage);
     this.app.get(`${PROBLEMS_API}/language`, routes.language.getLanguageInfo);
     this.app.get(`${PROBLEMS_API}/language/:langId`, routes.language.getLanguageInfo);
+    this.app.put(`${PROBLEMS_API}/language/:langId`, routes.language.updateLanguageInfo);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
