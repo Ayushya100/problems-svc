@@ -56,10 +56,10 @@ const registerNewTagInfo = async (tagCd, tagDesc) => {
   return exec(query, params);
 };
 
-const getTagInfoById = async (tagId) => {
-  const query = `SELECT ID, TAG_CD, TAG_DESC, CREATED_DATE, MODIFIED_DATE FROM TAGS
-    WHERE IS_DELETED = false AND ID = ?;`;
-  const params = [tagId];
+const getTagInfoById = async (tagId, deletedRecord) => {
+  const query = `SELECT ID, TAG_CD, TAG_DESC, CORE, CREATED_DATE, MODIFIED_DATE FROM TAGS
+    WHERE IS_DELETED = ? AND ID = ?;`;
+  const params = [deletedRecord, tagId];
 
   return exec(query, params);
 };
@@ -85,6 +85,14 @@ const deleteProblemTypeInfoById = async (typeId, userId) => {
   return exec(query, params);
 };
 
+const deleteTagInfoById = async (tagId, userId) => {
+  const query = `UPDATE TAGS SET IS_DELETED = true, MODIFIED_BY = ?
+    WHERE ID = ?;`;
+  const params = [userId, tagId];
+
+  return exec(query, params);
+};
+
 export {
   isProblemExistAvailable,
   registerNewType,
@@ -97,4 +105,5 @@ export {
   getTags,
   updateTagInfo,
   deleteProblemTypeInfoById,
+  deleteTagInfoById,
 };
