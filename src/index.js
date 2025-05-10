@@ -31,6 +31,8 @@ class ProblemService extends Service {
 
     // Support Language Routes
     this.app.post(`${PROBLEMS_API}/language`, routes.language.registerSupportLanguage);
+    this.app.get(`${PROBLEMS_API}/language`, routes.language.getLanguageInfo);
+    this.app.get(`${PROBLEMS_API}/language/:langId`, routes.language.getLanguageInfo);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );

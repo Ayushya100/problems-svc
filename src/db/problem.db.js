@@ -118,6 +118,11 @@ const getLangInfoById = async (langId, deletedRecord) => {
   return exec(query, params);
 };
 
+const getAllLanguages = async () => {
+  const query = `SELECT ID, LANG_CD, LANGUAGE FROM SUPPORT_LANGUAGE WHERE IS_DELETED = false;`;
+  return exec(query);
+};
+
 export {
   isProblemExistAvailable,
   registerNewType,
@@ -134,4 +139,5 @@ export {
   isLanguageExistAvailable,
   registerNewLanguage,
   getLangInfoById,
+  getAllLanguages,
 };

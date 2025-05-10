@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
-import { getLangInfoById } from '../../db/index.js';
+import { getLangInfoById, getAllLanguages } from '../../db/index.js';
 
 const log = logger('Controller: get-problem-type');
 
@@ -54,4 +54,48 @@ const getLangById = async (langId, deletedRecord = false) => {
   }
 };
 
-export { getLangById };
+const getAllLanguageInfo = async () => {
+  try {
+    log.info('Controller function to fetch all the language info from system initiated');
+    log.info('Call db query to fetch all languages from db');
+    let langDtl = await getAllLanguages();
+    if (langDtl.rowCount === 0) {
+      log.info('No language info available to display');
+      return {
+        status: 204,
+        message: 'No language info available',
+        data: [],
+        isValid: true,
+      };
+    }
+
+    langDtl = langDtl.rows;
+    const data = langDtl.map((lang) => {
+      return {
+        id: convertIdToPrettyString(lang.id),
+        langCode: lang.lang_cd,
+        language: lang.language,
+      };
+    });
+
+    log.success('Support Languages fetch operation completed successfully');
+    return {
+      status: 200,
+      message: 'Support language fetched successfully',
+      data: data,
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('Error while fetching all support languages from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching all languages from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+export { getLangById, getAllLanguageInfo };
