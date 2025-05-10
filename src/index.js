@@ -1,6 +1,6 @@
 'use strict';
 
-import { Service } from 'common-node-lib';
+import { Service, verifyScope } from 'common-node-lib';
 import dotenv from 'dotenv';
 import { serviceConfig, PROBLEMS_API } from './constants.js';
 import routes from './routes/index.js';
@@ -16,16 +16,16 @@ class ProblemService extends Service {
 
   registerServiceEndpoints() {
     // Problem Types Routes
-    this.app.post(`${PROBLEMS_API}/problem-type`, routes.problemType.registerProblemType);
-    this.app.get(`${PROBLEMS_API}/problem-type`, routes.problemType.getProblemType);
-    this.app.get(`${PROBLEMS_API}/problem-type/:typeId`, routes.problemType.getProblemType);
-    this.app.put(`${PROBLEMS_API}/problem-type/:typeId`, routes.problemType.updateProblemType);
+    this.app.post(`${PROBLEMS_API}/problem/type`, verifyScope('PROBTYPE.U'), routes.problemType.registerProblemType);
+    this.app.get(`${PROBLEMS_API}/problem/type`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
+    this.app.get(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
+    this.app.put(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.U'), routes.problemType.updateProblemType);
 
     // Tags Routes
-    this.app.post(`${PROBLEMS_API}/tag`, routes.tags.registerTags);
-    this.app.get(`${PROBLEMS_API}/tag`, routes.tags.getTagInfo);
-    this.app.get(`${PROBLEMS_API}/tag/:tagId`, routes.tags.getTagInfo);
-    this.app.put(`${PROBLEMS_API}/tag/:tagId`, routes.tags.updateTags);
+    this.app.post(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.U'), routes.tags.registerTags);
+    this.app.get(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
+    this.app.get(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
+    this.app.put(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.U'), routes.tags.updateTags);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );

@@ -10,6 +10,7 @@ const updateProblemTypeById = async (typeId, userId, typeDtl, payload) => {
   try {
     log.info('Controller function to update the problem type info process initiated');
     payload.typeDesc = payload.typeDesc || typeDtl.typeDesc;
+    payload.executor = payload.executor || typeDtl.executor;
     typeId = convertPrettyStringToId(typeId);
     userId = convertPrettyStringToId(userId);
 

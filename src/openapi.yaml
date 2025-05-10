@@ -43,9 +43,13 @@ components:
           type: string
           description: Type Description
           minLength: 1
+        executor:
+          type: string
+          description: Executor
       required:
         - typeCode
         - typeDesc
+        - executor
 
     updateProblemTypePayload:
       type: object
@@ -53,6 +57,10 @@ components:
         typeDesc:
           type: string
           description: Type Description
+          minLength: 1
+        executor:
+          type: string
+          description: Executor
           minLength: 1
       required:
         - typeDesc
@@ -105,6 +113,12 @@ components:
         typeDesc:
           type: string
           example: Type Description
+        executor:
+          type: string
+          example: Executor
+        core:
+          type: boolean
+          example: false
         createdDate:
           type: string
         modifiedDate:
@@ -493,7 +507,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
-  /problem-type:
+  /problem/type:
     post:
       operationId: registerProblemType
       summary: Register New Problem Type
@@ -590,7 +604,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
-  /problem-type/{typeId}:
+  /problem/type/{typeId}:
     get:
       operationId: getProblemTypeById
       summary: Get Problem Type by ID
