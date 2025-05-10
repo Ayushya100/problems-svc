@@ -18,6 +18,7 @@ import {
   getLangInfoById,
   getAllLanguages,
   updateLanguageInfo,
+  deleteLanguageInfo,
 } from './problem.db.js';
 
 export {
@@ -38,4 +39,5 @@ export {
   getLangInfoById,
   getAllLanguages,
   updateLanguageInfo,
+  deleteLanguageInfo,
 };

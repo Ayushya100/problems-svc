@@ -131,6 +131,13 @@ const updateLanguageInfo = async (langId, userId, payload) => {
   return exec(query, params);
 };
 
+const deleteLanguageInfo = async (langId, userId) => {
+  const query = `UPDATE SUPPORT_LANGUAGE SET IS_DELETED = true, MODIFIED_BY = ? WHERE ID = ?;`;
+  const params = [userId, langId];
+
+  return exec(query, params);
+};
+
 export {
   isProblemExistAvailable,
   registerNewType,
@@ -149,4 +156,5 @@ export {
   getLangInfoById,
   getAllLanguages,
   updateLanguageInfo,
+  deleteLanguageInfo,
 };

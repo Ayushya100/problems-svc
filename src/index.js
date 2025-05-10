@@ -34,6 +34,7 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/language`, routes.language.getLanguageInfo);
     this.app.get(`${PROBLEMS_API}/language/:langId`, routes.language.getLanguageInfo);
     this.app.put(`${PROBLEMS_API}/language/:langId`, routes.language.updateLanguageInfo);
+    this.app.delete(`${PROBLEMS_API}/language/:langId`, routes.language.deleteLanguage);
 
     // Problem Routes
     // this.app.post(`${PROBLEMS_API}/problem`, );
