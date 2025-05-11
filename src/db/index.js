@@ -19,7 +19,19 @@ import {
   getAllLanguages,
   updateLanguageInfo,
   deleteLanguageInfo,
+  isProblemExist,
+  getMultipleTagsByIds,
+  getMultipleLanguagesByIds,
+  getLastProblemCode,
+  getProblemInfoById,
+  getProblemTagsById,
+  getProblemExampleById,
+  getProblemHintById,
+  getProblemTestCasesById,
+  getProblemSnippetsById,
 } from './problem.db.js';
+
+import { saveProblemRecords } from './problemTrans.db.js';
 
 export {
   isProblemExistAvailable,
@@ -40,4 +52,15 @@ export {
   getAllLanguages,
   updateLanguageInfo,
   deleteLanguageInfo,
+  isProblemExist,
+  getMultipleTagsByIds,
+  getMultipleLanguagesByIds,
+  getLastProblemCode,
+  getProblemInfoById,
+  getProblemTagsById,
+  getProblemExampleById,
+  getProblemHintById,
+  getProblemTestCasesById,
+  getProblemSnippetsById,
+  saveProblemRecords,
 };

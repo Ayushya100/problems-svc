@@ -11,6 +11,7 @@ const updateLanguageInfoById = async (langId, userId, langDtl, payload) => {
     log.info('Controller function to update the language info process initiated');
     payload.typeId = payload.typeId || langDtl.typeId;
     payload.language = payload.language || langDtl.language;
+    payload.metadata = payload.metadata || langDtl.metadata;
     langId = convertPrettyStringToId(langId);
     userId = convertPrettyStringToId(userId);
     payload.typeId = convertPrettyStringToId(payload.typeId);

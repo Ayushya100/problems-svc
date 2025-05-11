@@ -30,18 +30,18 @@ class ProblemService extends Service {
     this.app.delete(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.D'), routes.tags.deleteTag);
 
     // Support Language Routes
-    this.app.post(`${PROBLEMS_API}/language`, routes.language.registerSupportLanguage);
-    this.app.get(`${PROBLEMS_API}/language`, routes.language.getLanguageInfo);
-    this.app.get(`${PROBLEMS_API}/language/:langId`, routes.language.getLanguageInfo);
-    this.app.put(`${PROBLEMS_API}/language/:langId`, routes.language.updateLanguageInfo);
-    this.app.delete(`${PROBLEMS_API}/language/:langId`, routes.language.deleteLanguage);
+    this.app.post(`${PROBLEMS_API}/language`, verifyScope('PROBLANG.U'), routes.language.registerSupportLanguage);
+    this.app.get(`${PROBLEMS_API}/language`, verifyScope('PROBLANG.V'), routes.language.getLanguageInfo);
+    this.app.get(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.V'), routes.language.getLanguageInfo);
+    this.app.put(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.U'), routes.language.updateLanguageInfo);
+    this.app.delete(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.D'), routes.language.deleteLanguage);
 
     // Problem Routes
-    // this.app.post(`${PROBLEMS_API}/problem`, );
-    // this.app.get(`${PROBLEMS_API}/problem`, );
-    // this.app.get(`${PROBLEMS_API}/problem/:problemId`, );
-    // this.app.put(`${PROBLEMS_API}/problem/:problemId`, );
-    // this.app.delete(`${PROBLEMS_API}/problem/:problemId`, );
+    this.app.post(`${PROBLEMS_API}/problem`, verifyScope('PROBLEM.U'), routes.problem.registerProblem);
+    // this.app.get(`${PROBLEMS_API}/problem`, verifyScope('PROBLEM.V'), );
+    // this.app.get(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.V'), );
+    // this.app.put(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.U'), );
+    // this.app.delete(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.D'), );
     // this.app.get(`${PROBLEMS_API}/problem/solved`, );
     // this.app.get(`${PROBLEMS_API}/problem/solved/:problemId`, );
 

@@ -30,6 +30,7 @@ const getLangById = async (langId, deletedRecord = false) => {
       typeId: convertIdToPrettyString(langDtl.type_id),
       langCode: langDtl.lang_cd,
       language: langDtl.language,
+      metadata: langDtl.metadata,
       typeDesc: langDtl.type_desc,
       createdDate: convertToNativeTimeZone(langDtl.created_date),
       modifiedDate: convertToNativeTimeZone(langDtl.modified_date),
