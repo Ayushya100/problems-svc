@@ -52,9 +52,10 @@ const registerNewLanguageType = async (payload) => {
     const typeId = convertPrettyStringToId(payload.typeId);
     const langCode = payload.langCode.toUpperCase().trim();
     const language = payload.language.trim();
+    const metadata = payload.metadata;
 
     log.info('Call db query to register new language in system');
-    const newLanguage = await registerNewLanguage(typeId, langCode, language);
+    const newLanguage = await registerNewLanguage(typeId, langCode, language, metadata);
     const newLangId = newLanguage.rows[0].id;
 
     const newLangDtl = await getLangById(newLangId);

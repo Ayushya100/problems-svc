@@ -120,6 +120,7 @@ components:
         - typeId
         - langCode
         - language
+        - metadata
 
     updateLanguagePayload:
       type: object
@@ -134,6 +135,185 @@ components:
           minLength: 1
         metadata:
           type: string
+
+    registerProblemPayload:
+      type: object
+      properties:
+        typeId:
+          type: string
+          description: Type ID
+          minLength: 30
+        title:
+          type: string
+          description: Title
+          minLength: 1
+        description:
+          type: string
+          description: Problem Description
+          minLength: 1
+        difficulty:
+          type: string
+          minLength: 1
+          enum:
+            - Easy
+            - Medium
+            - Hard
+        tags:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        examples:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/problemExampleData'
+        constraints:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        hints:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/problemHintsData'
+        testCases:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/testCasesData'
+        codeSnippets:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/codeSnippetsData'
+        referenceSolutions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/referenceSolutionsData'
+      required:
+        - typeId
+        - title
+        - description
+        - difficulty
+        - tags
+        - examples
+        - constraints
+        - hints
+        - testCases
+        - codeSnippets
+        - referenceSolutions
+
+    problemExampleData:
+      title: Schema for Problem Example Data
+      type: object
+      properties:
+        id:
+          type: string
+        input:
+          type: string
+          minLength: 1
+        output:
+          type: string
+          minLength: 1
+        explanation:
+          type: string
+          minLength: 1
+      required:
+        - input
+        - output
+        - explanation
+
+    problemHintsData:
+      title: Schema for Problem Hints Data
+      type: object
+      properties:
+        id:
+          type: string
+        orderNo:
+          type: integer
+        hint:
+          type: string
+          minLength: 1
+      required:
+        - orderNo
+        - hint
+
+    testCasesData:
+      title: Schema for Problem Test Cases
+      type: object
+      properties:
+        input:
+          type: string
+          minLength: 1
+        output:
+          type: string
+          minLength: 1
+        isPublic:
+          type: boolean
+      required:
+        - input
+        - output
+        - isPublic
+
+    codeSnippetsData:
+      title: Schema for Problem Code Snippets
+      type: object
+      properties:
+        id:
+          type: string
+        languageId:
+          type: string
+          minLength: 30
+        snippet:
+          type: string
+          minLength: 1
+      required:
+         - languageId
+         - snippet
+
+    referenceSolutionsData:
+      title: Schema for Problem Reference Solutions
+      type: object
+      properties:
+        languageId:
+          type: string
+          minLength: 30
+        solution:
+          type: string
+          minLength: 1
+      required:
+        - languageId
+        - solution
+
+    problemTagsData:
+      title: Schema for Problem Tags
+      type: object
+      properties:
+        id:
+          type: string
+        tag:
+          type: string
+      required:
+        - id
+        - tag
+
+    problemTestCasesData:
+      title: Schema for Problem Test Cases
+      type: object
+      properties:
+        id:
+          type: string
+        input:
+          type: string
+        output:
+          type: string
+      required:
+        - id
+        - input
+        - output
 
     healthCheckData:
       title: Schema for Health Check Data
@@ -209,12 +389,66 @@ components:
           type: string
         language:
           type: string
+        metadata:
+          type: string
+          nullable: true
         typeCode:
           type: string
       required:
         - id
         - langCode
         - language
+
+    getProblemResponseData:
+      title: Schema for retrieving Problem Details
+      type: object
+      properties:
+        id:
+          type: string
+        problemCode:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        difficulty:
+          type: string
+        constraints:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/problemTagsData'
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/problemExampleData'
+        hints:
+          type: array
+          items:
+            $ref: '#/components/schemas/problemHintsData'
+        testCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/problemTestCasesData'
+        codeSnippet:
+          type: array
+          items:
+            $ref: '#/components/schemas/codeSnippetsData'
+      required:
+        - id
+        - problemCode
+        - title
+        - description
+        - difficulty
+        - constraints
+        - tags
+        - examples
+        - hints
+        - testCases
+        - codeSnippet
 
     healthCheckSuccessResponse:
       type: object
@@ -501,6 +735,35 @@ components:
         - success
         - data
 
+    registerProblemResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/getProblemResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
     noContentResponse:
       type: object
       properties:
@@ -602,6 +865,26 @@ components:
         data:
           type: array
 
+    requestTimeout:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 408
+        type:
+          type: string
+          example: 'REQUEST_TIMEOUT'
+        message:
+          type: string
+          example: 'Request timeout.'
+        devMessage:
+          type: string
+          example: 'Request timeout.'
+        error:
+          type: array
+        data:
+          type: array
+
     userAlreadyExist:
       type: object
       properties:
@@ -617,6 +900,46 @@ components:
         devMessage:
           type: string
           example: 'Resource already exist'
+        error:
+          type: array
+        data:
+          type: array
+
+    unsupportedMedia:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 415
+        type:
+          type: string
+          example: 'UNSUPPORTED_MEDIA'
+        message:
+          type: string
+          example: 'The media format of the requested data is not supported by the server.'
+        devMessage:
+          type: string
+          example: 'The media format of the requested data is not supported by the server.'
+        error:
+          type: array
+        data:
+          type: array
+
+    unprocessableContent:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 422
+        type:
+          type: string
+          example: 'UNPROCESSABLE_CONTENT'
+        message:
+          type: string
+          example: 'The request was unabled to be followed due to semantic/internal errors.'
+        devMessage:
+          type: string
+          example: 'The request was unabled to be followed due to semantic/internal errors.'
         error:
           type: array
         data:
@@ -1368,6 +1691,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /problem:
+    post:
+      operationId: registerProblems
+      summary: Register new Problems
+      description: An API to register new problem in system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerProblemPayload'
+      responses:
+        '201':
+          description: REQUEST_COMPLETED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registerProblemResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '408':
+          description: REQUEST_TIMEOUT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestTimeout'
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAlreadyExist'
+        '415':
+          description: UNSUPPORTED_MEDIA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unsupportedMedia'
+        '422':
+          description: UNPROCESSABLE_CONTENT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessableContent'
         '500':
           description: INTERNAL_SERVER_ERROR
           content:
