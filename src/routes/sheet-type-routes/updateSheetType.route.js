@@ -3,30 +3,30 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: get-problem-type');
-const problemTypeController = controllers.problemTypeController;
+const log = logger('Route: get-sheet-type');
+const sheetTypeController = controllers.sheetTypeController;
 
 // API Function
-const updateProblemType = async (req, res, next) => {
+const updateSheetType = async (req, res, next) => {
   try {
-    log.info('Problem type for requested id update operation initiated');
+    log.info('Sheet type for requested id update operation initiated');
     const typeId = req.params.typeId;
     const payload = req.body;
     const userId = req.user.id;
 
-    log.info('Call controller function to validate if problem type for requested id exists');
-    const typeDtl = await problemTypeController.getTypeById(typeId);
+    log.info('Call controller function to validate if sheet type for requested id exists');
+    const typeDtl = await sheetTypeController.getTypeById(typeId);
     if (!typeDtl.isValid) {
       throw typeDtl;
     }
 
-    log.info('Call controller function to update the problem type for provided id');
-    const updatedTypeDtl = await problemTypeController.updateProblemTypeById(typeId, userId, typeDtl.data, payload);
+    log.info('Call controller function to update the sheet type for provided id');
+    const updatedTypeDtl = await sheetTypeController.updateSheetTypeById(typeId, userId, typeDtl.data, payload);
     if (!updatedTypeDtl.isValid) {
       throw updatedTypeDtl;
     }
 
-    log.success('Problem type description has been updated successfully');
+    log.success('Sheet type description has been updated successfully');
     res.status(200).json(buildApiResponse(updatedTypeDtl));
   } catch (err) {
     if (err.statusCode === '500') {
@@ -38,4 +38,4 @@ const updateProblemType = async (req, res, next) => {
   }
 };
 
-export default updateProblemType;
+export default updateSheetType;

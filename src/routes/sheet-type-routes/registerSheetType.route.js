@@ -3,29 +3,29 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Router: register-problem-type');
-const problemTypeController = controllers.problemTypeController;
+const log = logger('Router: register-sheet-type');
+const sheetTypeController = controllers.sheetTypeController;
 
 // API Function
-const registerProblemType = async (req, res, next) => {
+const registerSheetType = async (req, res, next) => {
   try {
-    log.info('Register problem types request process initiated');
+    log.info('Register sheet types request process initiated');
     const payload = req.body;
     payload.typeCode = payload.typeCode.toUpperCase().trim();
 
-    log.info('Call controller function to validate if problem type code is valid to create');
-    const typeExist = await problemTypeController.verifyProblemTypeExist(payload.typeCode);
+    log.info('Call controller function to validate if sheet type code is valid to create');
+    const typeExist = await sheetTypeController.verifySheetTypeExist(payload.typeCode);
     if (!typeExist.isValid) {
       throw typeExist;
     }
 
-    log.info('Call controller function to register new problem type in system');
-    const typeDtl = await problemTypeController.registerNewProblemType(payload);
+    log.info('Call controller function to register new sheet type in system');
+    const typeDtl = await sheetTypeController.registerNewSheetType(payload);
     if (!typeDtl.isValid) {
       throw typeDtl;
     }
 
-    log.success('Problem Type registered successfully');
+    log.success('Sheet Type registered successfully');
     res.status(201).json(buildApiResponse(typeDtl));
   } catch (err) {
     if (err.statusCode === '500') {
@@ -37,4 +37,4 @@ const registerProblemType = async (req, res, next) => {
   }
 };
 
-export default registerProblemType;
+export default registerSheetType;

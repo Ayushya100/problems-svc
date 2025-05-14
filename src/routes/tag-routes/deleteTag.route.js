@@ -3,7 +3,7 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: delete-problem-type');
+const log = logger('Route: delete-tag');
 const tagController = controllers.tagController;
 
 // API Function

@@ -1,44 +1,43 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, logger } from 'common-node-lib';
-import { isProblemExist, getMultipleTagsByIds, getMultipleLanguagesByIds, getLastProblemCode } from '../../db/index.js';
+import { isSheetExist, getMultipleTagsByIds, getMultipleLanguagesByIds, getLastSheetCode, saveSheetRecords } from '../../db/index.js';
 import { batchSubmission, batchResult } from '../../utils/requestJudge0Svc.js';
-import { saveProblemRecords } from '../../db/index.js';
-import { getProblemById } from './getProblemInfo.controller.js';
+import { getSheetDetailsById } from './getSheetInfo.controller.js';
 
-const log = logger('Controller: register-problem');
+const log = logger('Controller: register-sheet');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const verifyProblemExist = async (title) => {
+const verifySheetExist = async (title) => {
   try {
-    log.info('Controller function to validate if the problem with same title already exist in system activated');
-    log.info('Call db query to validate if problem with title already exists');
-    const problemDtl = await isProblemExist(title);
-    if (problemDtl.rowCount > 0) {
-      log.error('Problem with same title already exists in system');
+    log.info('Controller function to validate if the sheet with same title already exist in system activated');
+    log.info('Call db query to validate if sheet with title already exists');
+    const sheetDtl = await isSheetExist(title);
+    if (sheetDtl.rowCount > 0) {
+      log.error('Sheet with same title already exists in system');
       return {
         status: 409,
-        message: 'Problem with same title already exists',
+        message: 'Sheet with same title already exists',
         data: [],
         errors: [],
-        stack: 'verifyProblemExist function call',
+        stack: 'verifySheetExist function call',
         isValid: false,
       };
     }
 
-    log.success('Problem title verification completed successfully');
+    log.success('Sheet title verification completed successfully');
     return {
       status: 200,
-      message: 'Problem does not exists in system',
+      message: 'Sheet does not exists in system',
       data: {},
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while validating new problem in system');
+    log.error('Error while validating new sheet in system');
     return {
       status: 500,
-      message: 'An error occurred while validating problem in system',
+      message: 'An error occurred while validating sheet in system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -47,9 +46,9 @@ const verifyProblemExist = async (title) => {
   }
 };
 
-const verifyTagsForProblem = async (tags) => {
+const verifyTagsForSheet = async (tags) => {
   try {
-    log.info('Controller function to validate provided tags for problem system initiated');
+    log.info('Controller function to validate provided tags for sheet system initiated');
     if (tags.length > 0) {
       const getMultipleTagsRecords = tags.map(() => '?').join(', ');
       const multipleTags = tags.map((tag) => convertPrettyStringToId(tag));
@@ -62,7 +61,7 @@ const verifyTagsForProblem = async (tags) => {
           message: 'Provided tags id incorrect',
           data: [],
           errors: [],
-          stack: 'verifyTagsForProblem function call',
+          stack: 'verifyTagsForSheet function call',
           isValid: false,
         };
       }
@@ -76,10 +75,10 @@ const verifyTagsForProblem = async (tags) => {
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while validating provided tags for problem in system');
+    log.error('Error while validating provided tags for sheet in system');
     return {
       status: 500,
-      message: 'An error occurred while validating tags for problem in system',
+      message: 'An error occurred while validating tags for sheet in system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -103,7 +102,7 @@ const pollBatchResults = async (protocol, params) => {
 
 const validateSolutions = async (protocol, payload) => {
   try {
-    log.info('Call controller function to validate the reference solutions and test cases for the requested problems');
+    log.info('Call controller function to validate the reference solutions and test cases for the requested sheets');
     const referenceSolutions = payload.referenceSolutions;
     const testCases = payload.testCases;
 
@@ -209,10 +208,10 @@ const validateSolutions = async (protocol, payload) => {
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while validating provided solutions for problem in system');
+    log.error('Error while validating provided solutions for sheet in system');
     return {
       status: 500,
-      message: 'An error occurred while validating solutions for problem in system',
+      message: 'An error occurred while validating solutions for sheet in system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -221,19 +220,19 @@ const validateSolutions = async (protocol, payload) => {
   }
 };
 
-const registerNewProblem = async (userId, userApproveStatus, payload) => {
+const registerNewSheet = async (userId, userApproveStatus, payload) => {
   try {
-    log.info('Call controller function to store problem details in db');
+    log.info('Call controller function to store sheet details in db');
     userId = convertPrettyStringToId(userId);
     payload.tags = payload.tags.map((tag) => convertPrettyStringToId(tag));
 
-    let problemCode;
-    log.info('Call db query to fetch last running number for the problem code');
-    let lastProblemCode = await getLastProblemCode();
-    if (lastProblemCode.rowCount === 0) {
-      problemCode = 1;
+    let sheetCode;
+    log.info('Call db query to fetch last running number for the sheet code');
+    let lastSheetCode = await getLastSheetCode();
+    if (lastSheetCode.rowCount === 0) {
+      sheetCode = 1;
     } else {
-      problemCode = lastProblemCode.rows[0].problem_cd + 1;
+      sheetCode = lastSheetCode.rows[0].problem_cd + 1;
     }
 
     const tagPayload = [];
@@ -243,15 +242,16 @@ const registerNewProblem = async (userId, userApproveStatus, payload) => {
     const snippetPayload = [];
     const solutionPayload = [];
 
-    const problemPayload = {
+    const sheetPayload = {
       typeId: convertPrettyStringToId(payload.typeId),
-      problemCode: problemCode,
-      problemTitle: payload.title,
-      problemDesc: payload.description,
+      sheetCode: sheetCode,
+      sheetTitle: payload.title,
+      sheetDesc: payload.description,
       difficulty: payload.difficulty,
       constraints: payload.constraints,
       approved: userApproveStatus,
     };
+    console.log(sheetPayload);
 
     for (const tag of payload.tags) {
       tagPayload.push(tag);
@@ -294,23 +294,23 @@ const registerNewProblem = async (userId, userApproveStatus, payload) => {
       });
     }
 
-    log.info('Call register query to store problem details in db');
-    const problemInfo = await saveProblemRecords(problemPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload);
-    const problemId = problemInfo.rows[0].id;
+    log.info('Call register query to store sheet details in db');
+    const sheetInfo = await saveSheetRecords(sheetPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload);
+    const sheetId = sheetInfo.rows[0].id;
 
-    const newProblemDtl = await getProblemById(problemId);
-    log.success('Problem registered successfully');
+    const newSheetDtl = await getSheetDetailsById(sheetId);
+    log.success('Sheet registered successfully');
     return {
       status: 201,
-      message: 'Problem registered successfully',
-      data: newProblemDtl.data,
+      message: 'Sheet registered successfully',
+      data: newSheetDtl.data,
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while storing problem details in system');
+    log.error('Error while storing sheet details in system');
     return {
       status: 500,
-      message: 'An error occurred while storing problem details in system',
+      message: 'An error occurred while storing sheet details in system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -319,4 +319,4 @@ const registerNewProblem = async (userId, userApproveStatus, payload) => {
   }
 };
 
-export { verifyProblemExist, verifyTagsForProblem, validateSolutions, registerNewProblem };
+export { verifySheetExist, verifyTagsForSheet, validateSolutions, registerNewSheet };

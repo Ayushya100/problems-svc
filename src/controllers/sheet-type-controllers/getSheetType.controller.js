@@ -3,20 +3,20 @@
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
 import { getTypeInfoById, getAllTypeInfo } from '../../db/index.js';
 
-const log = logger('Controller: get-problem-type');
+const log = logger('Controller: get-sheet-type');
 
 const getTypeById = async (typeId, deletedRecord = false) => {
   try {
-    log.info('Controller function to fetch problem type by id process initiated');
+    log.info('Controller function to fetch sheet type by id process initiated');
     typeId = convertPrettyStringToId(typeId);
 
     log.info(`Call db query to fetch type details for provided id: ${typeId}`);
     let typeDtl = await getTypeInfoById(typeId, deletedRecord);
     if (typeDtl.rowCount === 0) {
-      log.error('Problem type requested with the id does not exists in system');
+      log.error('Sheet type requested with the id does not exists in system');
       return {
         status: 404,
-        message: 'Problem type not found',
+        message: 'Sheet type not found',
         data: [],
         errors: [],
         stack: 'getTypeById function call',
@@ -35,18 +35,18 @@ const getTypeById = async (typeId, deletedRecord = false) => {
       modifiedDate: convertToNativeTimeZone(typeDtl.modified_date),
     };
 
-    log.success('Requested problem type details fetched successfully');
+    log.success('Requested Sheet type details fetched successfully');
     return {
       status: 200,
-      message: 'Problem type fetched successfully',
+      message: 'Sheet type fetched successfully',
       data: typeDtl,
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while fetching problem type for requested id from system');
+    log.error('Error while fetching sheet type for requested id from system');
     return {
       status: 500,
-      message: 'An error occurred while fetching problem type for requested id from system',
+      message: 'An error occurred while fetching sheet type for requested id from system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -55,16 +55,16 @@ const getTypeById = async (typeId, deletedRecord = false) => {
   }
 };
 
-const getAllProblemTypes = async () => {
+const getAllSheetTypes = async () => {
   try {
-    log.info('Controller function to fetch all the problem types from system initiated');
-    log.info('Call db query to fetch all problem types from db');
+    log.info('Controller function to fetch all the sheet types from system initiated');
+    log.info('Call db query to fetch all sheet types from db');
     let typeDtl = await getAllTypeInfo();
     if (typeDtl.rowCount === 0) {
-      log.info('No Problem type available to display');
+      log.info('No sheet type available to display');
       return {
         status: 204,
-        message: 'No problem type found',
+        message: 'No sheet type found',
         data: [],
         isValid: true,
       };
@@ -80,18 +80,18 @@ const getAllProblemTypes = async () => {
       };
     });
 
-    log.success('Problem types fetch operation completed successfully');
+    log.success('Sheet types fetch operation completed successfully');
     return {
       status: 200,
-      message: 'Problem type fetched successfully',
+      message: 'Sheet type fetched successfully',
       data: data,
       isValid: true,
     };
   } catch (err) {
-    log.error('Error while fetching all problems from system');
+    log.error('Error while fetching all sheets from system');
     return {
       status: 500,
-      message: 'An error occurred while fetching all problems from system',
+      message: 'An error occurred while fetching all sheets from system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -100,4 +100,4 @@ const getAllProblemTypes = async () => {
   }
 };
 
-export { getTypeById, getAllProblemTypes };
+export { getTypeById, getAllSheetTypes };

@@ -2,7 +2,7 @@
 
 import { trxRunner } from 'common-node-lib';
 
-const saveProblemRecords = async (problemPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload) => {
+const saveSheetRecords = async (problemPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload) => {
   const storeMultipleTagsRecord = tagPayload.map(() => '(?, ?)').join(', ');
   const storeMultipleExamplesRecord = examplePayload.map(() => '(?, ?, ?, ?)').join(', ');
   const storeMultipleHintsRecord = hintsPayload.map(() => '(?, ?, ?)').join(', ');
@@ -16,9 +16,9 @@ const saveProblemRecords = async (problemPayload, tagPayload, examplePayload, hi
             RETURNING ID;`;
     const problemParams = [
       problemPayload.typeId,
-      problemPayload.problemCode,
-      problemPayload.problemTitle,
-      problemPayload.problemDesc,
+      problemPayload.sheetCode,
+      problemPayload.sheetTitle,
+      problemPayload.sheetDesc,
       problemPayload.constraints,
       problemPayload.difficulty,
       problemPayload.approved,
@@ -61,4 +61,4 @@ const saveProblemRecords = async (problemPayload, tagPayload, examplePayload, hi
   return result;
 };
 
-export { saveProblemRecords };
+export { saveSheetRecords };

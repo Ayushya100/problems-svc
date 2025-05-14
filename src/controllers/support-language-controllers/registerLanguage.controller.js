@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertPrettyStringToId, logger } from 'common-node-lib';
-import { isLanguageExistAvailable, registerNewLanguage } from '../../db/index.js';
+import { isLanguageExistAvailable, registerNewLanguage, getDefaultLangForTypeId, changeLangToNonDefaultById } from '../../db/index.js';
 import { getLangById } from './getLanguage.controller.js';
 
 const log = logger('Controller: register-support-language');
@@ -46,16 +46,27 @@ const verifyLanguageExist = async (payload) => {
   }
 };
 
-const registerNewLanguageType = async (payload) => {
+const registerNewLanguageType = async (userId, payload) => {
   try {
     log.info('Controller function to register new support language in system initiated');
     const typeId = convertPrettyStringToId(payload.typeId);
     const langCode = payload.langCode.toUpperCase().trim();
     const language = payload.language.trim();
-    const metadata = payload.metadata;
+    const metadata = payload.metadata || null;
+    let isDefault = payload.default || false;
+
+    log.info('Call db query to fetch the default support language from system for requested type id');
+    const defaultLang = await getDefaultLangForTypeId(typeId);
+    if (isDefault && defaultLang.rowCount > 0) {
+      log.info('Call db query to convert the existing default support language to non-default');
+      const defaultLangId = defaultLang.rows[0].id;
+      await changeLangToNonDefaultById(userId, defaultLangId);
+    } else if (!isDefault && defaultLang.rowCount === 0) {
+      isDefault = true;
+    }
 
     log.info('Call db query to register new language in system');
-    const newLanguage = await registerNewLanguage(typeId, langCode, language, metadata);
+    const newLanguage = await registerNewLanguage(typeId, langCode, language, metadata, isDefault);
     const newLangId = newLanguage.rows[0].id;
 
     const newLangDtl = await getLangById(newLangId);

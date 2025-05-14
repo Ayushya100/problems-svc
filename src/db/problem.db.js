@@ -2,7 +2,7 @@
 
 import { exec } from 'common-node-lib';
 
-const isProblemExistAvailable = async (typeCd) => {
+const isSheetExistAvailable = async (typeCd) => {
   const query = `SELECT ID, TYPE_CD, TYPE_DESC, IS_DELETED FROM PROBLEM_TYPE
         WHERE TYPE_CD = ? AND IS_DELETED = false;`;
   const params = [typeCd];
@@ -77,7 +77,7 @@ const updateTagInfo = async (payload, userId, tagId) => {
   return exec(query, params);
 };
 
-const deleteProblemTypeInfoById = async (typeId, userId) => {
+const deleteSheetTypeInfoById = async (typeId, userId) => {
   const query = `UPDATE PROBLEM_TYPE SET IS_DELETED = true, MODIFIED_BY = ?
     WHERE ID = ?;`;
   const params = [userId, typeId];
@@ -99,17 +99,29 @@ const isLanguageExistAvailable = async (typeId, langCode) => {
   return exec(query, params);
 };
 
-const registerNewLanguage = async (typeId, langCode, language, metadata) => {
-  const query = `INSERT INTO SUPPORT_LANGUAGE (TYPE_ID, LANG_CD, LANGUAGE, METADATA)
-    VALUES (?, ?, ?, ?)
+const getDefaultLangForTypeId = async (typeId) => {
+  const query = `SELECT ID FROM SUPPORT_LANGUAGE WHERE TYPE_ID = ? AND IS_DELETED = false;`;
+  const params = [typeId];
+  return exec(query, params);
+};
+
+const changeLangToNonDefaultById = async (userId, langId) => {
+  const query = `UPDATE SUPPORT_LANGUAGE SET IS_DEFAULT = false, MODIFIED_BY = ? WHERE ID = ?;`;
+  const params = [userId, langId];
+  return exec(query, params);
+};
+
+const registerNewLanguage = async (typeId, langCode, language, metadata, isDefault) => {
+  const query = `INSERT INTO SUPPORT_LANGUAGE (TYPE_ID, LANG_CD, LANGUAGE, METADATA, IS_DEFAULT)
+    VALUES (?, ?, ?, ?, ?)
     RETURNING ID;`;
-  const params = [typeId, langCode, language, metadata];
+  const params = [typeId, langCode, language, metadata, isDefault];
 
   return exec(query, params);
 };
 
 const getLangInfoById = async (langId, deletedRecord) => {
-  const query = `SELECT S.ID, S.TYPE_ID, S.LANG_CD, S.LANGUAGE, S.METADATA, P.TYPE_DESC, S.CREATED_DATE, S.MODIFIED_DATE
+  const query = `SELECT S.ID, S.TYPE_ID, S.LANG_CD, S.LANGUAGE, S.METADATA, S.IS_DEFAULT, P.TYPE_DESC, S.CREATED_DATE, S.MODIFIED_DATE
     FROM SUPPORT_LANGUAGE S
     INNER JOIN PROBLEM_TYPE P ON P.ID = S.TYPE_ID
     WHERE S.ID = ? AND S.IS_DELETED = ?;`;
@@ -119,8 +131,19 @@ const getLangInfoById = async (langId, deletedRecord) => {
 };
 
 const getAllLanguages = async () => {
-  const query = `SELECT ID, LANG_CD, LANGUAGE FROM SUPPORT_LANGUAGE WHERE IS_DELETED = false;`;
+  const query = `SELECT ID, LANG_CD, LANGUAGE, IS_DEFAULT FROM SUPPORT_LANGUAGE WHERE IS_DELETED = false;`;
   return exec(query);
+};
+
+const getLanguagesByTypeId = async (typeId, defaultLang = null) => {
+  let query = `SELECT ID, LANG_CD, LANGUAGE, IS_DEFAULT FROM SUPPORT_LANGUAGE WHERE IS_DELETED = false AND TYPE_ID = ?`;
+  const params = [typeId];
+
+  if (defaultLang) {
+    query += ` AND IS_DEFAULT = ?`;
+    params.push(defaultLang);
+  }
+  return exec(query, params);
 };
 
 const updateLanguageInfo = async (langId, userId, payload) => {
@@ -138,7 +161,7 @@ const deleteLanguageInfo = async (langId, userId) => {
   return exec(query, params);
 };
 
-const isProblemExist = async (title) => {
+const isSheetExist = async (title) => {
   const query = `SELECT ID FROM PROBLEMS WHERE PROBLEM_TITLE = ? AND IS_DELETED = false;`;
   const params = [title];
   return exec(query, params);
@@ -156,75 +179,95 @@ const getMultipleLanguagesByIds = async (getMultipleLanguageRecords, languageIds
   return exec(query, params);
 };
 
-const getLastProblemCode = async () => {
+const getLastSheetCode = async () => {
   const query = `SELECT PROBLEM_CD FROM PROBLEMS WHERE IS_DELETED = false ORDER BY PROBLEM_CD DESC LIMIT 1;`;
   return exec(query);
 };
 
-const getProblemInfoById = async (problemId, deletedRecord) => {
-  // const query = `SELECT P.ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.PROBLEM_DESC, P.DIFFICULTY, P.CONSTRAINTS
-  //   , H.ID HINT_ID, H.HINT_NO, H.HINT, C.ID TEST_CASE_ID, C.INPUT, C.OUTPUT, S.ID SNIPPET_ID, S.LANGUAGE_ID, S.SNIPPET
-  //   FROM PROBLEMS P
-  //
-  //   INNER JOIN PROBLEM_SNIPPET S ON S.PROBLEM_ID = P.ID AND S.IS_DELETED = false
-  //   INNER JOIN SUPPORT_LANGUAGE L ON L.ID = S.LANGUAGE_ID AND L.LANG_CD = ?
-  //   WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const query = `SELECT P.ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.PROBLEM_DESC, P.DIFFICULTY, P.CONSTRAINTS FROM PROBLEMS P
+const getSheetInfoById = async (sheetId, deletedRecord) => {
+  const query = `SELECT P.ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.PROBLEM_DESC, P.DIFFICULTY, P.CONSTRAINTS, P.CREATED_DATE, P.MODIFIED_DATE
+    FROM PROBLEMS P
     WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [problemId, deletedRecord];
+  const params = [sheetId, deletedRecord];
 
   return exec(query, params);
 };
 
-const getProblemTagsById = async (problemId, deletedRecord) => {
+const getSheetTagsById = async (sheetId, deletedRecord) => {
   const query = `SELECT TAG.ID TAG_ID, TAG.TAG_DESC
     FROM PROBLEMS P
     INNER JOIN PROBLEM_TAGS T ON T.PROBLEM_ID = P.ID AND T.IS_DELETED = false
     INNER JOIN TAGS TAG ON TAG.ID = T.TAG_ID AND TAG.IS_DELETED = false
     WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [problemId, deletedRecord];
+  const params = [sheetId, deletedRecord];
   return exec(query, params);
 };
 
-const getProblemExampleById = async (problemId, deletedRecord) => {
+const getSheetExampleById = async (sheetId, deletedRecord) => {
   const query = `SELECT E.ID EXAMPLE_ID, E.INPUT, E.OUTPUT, E.EXPLANATION
     FROM PROBLEMS P
     INNER JOIN PROBLEM_EXAMPLES E ON E.PROBLEM_ID = P.ID AND E.IS_DELETED = false
     WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [problemId, deletedRecord];
+  const params = [sheetId, deletedRecord];
   return exec(query, params);
 };
 
-const getProblemHintById = async (problemId, deletedRecord) => {
+const getSheetHintById = async (sheetId, deletedRecord) => {
   const query = `SELECT H.ID HINT_ID, H.HINT_NO, H.HINT
     FROM PROBLEMS P
     INNER JOIN PROBLEM_HINTS H ON H.PROBLEM_ID = P.ID AND H.IS_DELETED = false
     WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [problemId, deletedRecord];
+  const params = [sheetId, deletedRecord];
   return exec(query, params);
 };
 
-const getProblemTestCasesById = async (problemId, deletedRecord) => {
-  const query = `SELECT C.ID TEST_CASE_ID, C.INPUT, C.OUTPUT
+const getSheetTestCasesById = async (sheetId, deletedRecord, privateRecords) => {
+  let query = `SELECT C.ID TEST_CASE_ID, C.INPUT, C.OUTPUT, C.IS_PUBLIC
     FROM PROBLEMS P
-    INNER JOIN PROBLEM_TEST_CASES C ON C.PROBLEM_ID = P.ID AND C.IS_DELETED = false AND C.IS_PUBLIC = true
-    WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [problemId, deletedRecord];
+    INNER JOIN PROBLEM_TEST_CASES C ON C.PROBLEM_ID = P.ID AND C.IS_DELETED = false
+    WHERE P.ID = ? AND P.IS_DELETED = ?`;
+  const params = [sheetId, deletedRecord];
+
+  if (!privateRecords) {
+    query += ` AND C.IS_PUBLIC = true`;
+  }
   return exec(query, params);
 };
 
-const getProblemSnippetsById = async (problemId, deletedRecord, defaultLang) => {
-  const query = `SELECT S.ID SNIPPET_ID, S.LANGUAGE_ID, S.SNIPPET
+const getSheetSnippetsById = async (sheetId, deletedRecord, defaultLang) => {
+  let query = `SELECT S.ID SNIPPET_ID, S.LANGUAGE_ID, S.SNIPPET
     FROM PROBLEMS P
     INNER JOIN PROBLEM_SNIPPET S ON S.PROBLEM_ID = P.ID AND S.IS_DELETED = false
-    INNER JOIN SUPPORT_LANGUAGE L ON L.ID = S.LANGUAGE_ID AND L.LANG_CD = ?
-    WHERE P.ID = ? AND P.IS_DELETED = ?;`;
-  const params = [defaultLang, problemId, deletedRecord];
+    INNER JOIN SUPPORT_LANGUAGE L ON L.ID = S.LANGUAGE_ID
+    WHERE P.ID = ? AND P.IS_DELETED = ?`;
+  const params = [sheetId, deletedRecord];
+
+  if (defaultLang) {
+    query += ` AND L.LANG_CD = ?;`;
+    params.push(defaultLang);
+  }
   return exec(query, params);
+};
+
+const getSheetSolutionsById = async (sheetId) => {
+  const query = `SELECT S.ID SOLUTION_ID, S.LANGUAGE_ID, S.SOLUTION
+    FROM PROBLEMS P
+    INNER JOIN PROBLEM_SOLUTION S ON S.PROBLEM_ID = P.ID AND S.IS_DELETED = false
+    WHERE P.ID = ? AND P.IS_DELETED = false;`;
+  const params = [sheetId];
+
+  return exec(query, params);
+};
+
+const getAllSheetInfo = async () => {
+  const query = `SELECT ID, TYPE_ID, PROBLEM_CD, PROBLEM_TITLE, DIFFICULTY
+    FROM PROBLEMS
+    WHERE IS_DELETED = false AND APPROVED = true;`;
+  return exec(query);
 };
 
 export {
-  isProblemExistAvailable,
+  isSheetExistAvailable,
   registerNewType,
   getTypeInfoById,
   getAllTypeInfo,
@@ -234,22 +277,27 @@ export {
   getTagInfoById,
   getTags,
   updateTagInfo,
-  deleteProblemTypeInfoById,
+  deleteSheetTypeInfoById,
   deleteTagInfoById,
   isLanguageExistAvailable,
+  getDefaultLangForTypeId,
+  changeLangToNonDefaultById,
   registerNewLanguage,
   getLangInfoById,
   getAllLanguages,
+  getLanguagesByTypeId,
   updateLanguageInfo,
   deleteLanguageInfo,
-  isProblemExist,
+  isSheetExist,
   getMultipleTagsByIds,
   getMultipleLanguagesByIds,
-  getLastProblemCode,
-  getProblemInfoById,
-  getProblemTagsById,
-  getProblemExampleById,
-  getProblemHintById,
-  getProblemTestCasesById,
-  getProblemSnippetsById,
+  getLastSheetCode,
+  getSheetInfoById,
+  getSheetTagsById,
+  getSheetExampleById,
+  getSheetHintById,
+  getSheetTestCasesById,
+  getSheetSnippetsById,
+  getSheetSolutionsById,
+  getAllSheetInfo,
 };

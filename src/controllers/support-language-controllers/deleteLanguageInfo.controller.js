@@ -4,7 +4,7 @@ import { convertPrettyStringToId, logger } from 'common-node-lib';
 import { deleteLanguageInfo } from '../../db/index.js';
 import { getLangById } from './getLanguage.controller.js';
 
-const log = logger('Controller: delete-problem-type');
+const log = logger('Controller: delete-support-language');
 
 const deleteLanguageById = async (langId, userId) => {
   try {
