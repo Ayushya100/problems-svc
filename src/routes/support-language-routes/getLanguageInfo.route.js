@@ -3,7 +3,7 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: get-problem-type');
+const log = logger('Route: get-language-info');
 const languageController = controllers.languageController;
 
 // API Function
@@ -11,6 +11,7 @@ const getLanguageInfo = async (req, res, next) => {
   try {
     log.info('Get support language request process initiated');
     const langId = req.params.langId;
+    const typeId = req.params.typeId;
 
     let langDtl = {};
     if (langId) {
@@ -18,7 +19,7 @@ const getLanguageInfo = async (req, res, next) => {
       langDtl = await languageController.getLangById(langId);
     } else {
       log.info('Call controller function to fetch all the language details from system');
-      langDtl = await languageController.getAllLanguageInfo();
+      langDtl = await languageController.getAllLanguageInfo(typeId);
     }
     if (!langDtl.isValid) {
       throw langDtl;

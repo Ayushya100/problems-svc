@@ -3,7 +3,7 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: delete-language');
+const log = logger('Route: delete-support-language');
 const languageController = controllers.languageController;
 
 // API Function

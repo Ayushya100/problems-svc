@@ -3,8 +3,8 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: get-problem-type');
-const problemTypeController = controllers.problemTypeController;
+const log = logger('Route: update-language-info');
+const sheetTypeController = controllers.sheetTypeController;
 const languageController = controllers.languageController;
 
 // API Function
@@ -22,8 +22,8 @@ const updateLanguageInfo = async (req, res, next) => {
     }
 
     if (payload.typeId && payload.typeId !== langDtl.data.typeId) {
-      log.info('Call controller function to validate if problem type for newly provided id exists');
-      const typeDtl = await problemTypeController.getTypeById(payload.typeId);
+      log.info('Call controller function to validate if sheet type for newly provided id exists');
+      const typeDtl = await sheetTypeController.getTypeById(payload.typeId);
       if (!typeDtl.isValid) {
         throw typeDtl;
       }

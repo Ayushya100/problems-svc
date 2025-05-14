@@ -92,6 +92,28 @@ http://localhost:2358
 http://localhost:2358/docs
 ```
 
+## Judge0 Initiation Failure
+
+```bash
+# Open powershell
+# Enter in linux environment
+wsl
+
+# Enter into Judge0
+ls
+cd judge0-v1.13.1
+
+# Restart Judge0 with the below commands
+docker-compose up -d db redis
+docker-compose up -d
+
+# Test if Judge0 installed and running successfully by visiting
+http://localhost:2358/docs
+
+# Check via curl command
+curl -v http://localhost:2358/workers
+```
+
 ## 📦 Tech Stack
 - **Language:** Node.js
 - **Framework:** Express.js

@@ -15,31 +15,32 @@ class ProblemService extends Service {
   }
 
   registerServiceEndpoints() {
-    // Problem Types Routes
-    this.app.post(`${PROBLEMS_API}/problem/type`, verifyScope('PROBTYPE.U'), routes.problemType.registerProblemType);
-    this.app.get(`${PROBLEMS_API}/problem/type`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
-    this.app.get(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.V'), routes.problemType.getProblemType);
-    this.app.put(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.U'), routes.problemType.updateProblemType);
-    this.app.delete(`${PROBLEMS_API}/problem/type/:typeId`, verifyScope('PROBTYPE.D'), routes.problemType.deleteProblemType);
+    // Sheet Types Routes
+    this.app.post(`${PROBLEMS_API}/sheet/type`, verifyScope('SHEETTYPE.U'), routes.sheetType.registerSheetType);
+    this.app.get(`${PROBLEMS_API}/sheet/type`, verifyScope('SHEETTYPE.V'), routes.sheetType.getSheetType);
+    this.app.get(`${PROBLEMS_API}/sheet/type/:typeId`, verifyScope('SHEETTYPE.V'), routes.sheetType.getSheetType);
+    this.app.put(`${PROBLEMS_API}/sheet/type/:typeId`, verifyScope('SHEETTYPE.U'), routes.sheetType.updateSheetType);
+    this.app.delete(`${PROBLEMS_API}/sheet/type/:typeId`, verifyScope('SHEETTYPE.D'), routes.sheetType.deleteSheetType);
 
     // Tags Routes
-    this.app.post(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.U'), routes.tags.registerTags);
-    this.app.get(`${PROBLEMS_API}/tag`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
-    this.app.get(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.V'), routes.tags.getTagInfo);
-    this.app.put(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.U'), routes.tags.updateTags);
-    this.app.delete(`${PROBLEMS_API}/tag/:tagId`, verifyScope('PROBTAG.D'), routes.tags.deleteTag);
+    this.app.post(`${PROBLEMS_API}/tag`, verifyScope('SHEETTAG.U'), routes.tags.registerTags);
+    this.app.get(`${PROBLEMS_API}/tag`, verifyScope('SHEETTAG.V'), routes.tags.getTagInfo);
+    this.app.get(`${PROBLEMS_API}/tag/:tagId`, verifyScope('SHEETTAG.V'), routes.tags.getTagInfo);
+    this.app.put(`${PROBLEMS_API}/tag/:tagId`, verifyScope('SHEETTAG.U'), routes.tags.updateTags);
+    this.app.delete(`${PROBLEMS_API}/tag/:tagId`, verifyScope('SHEETTAG.D'), routes.tags.deleteTag);
 
     // Support Language Routes
-    this.app.post(`${PROBLEMS_API}/language`, verifyScope('PROBLANG.U'), routes.language.registerSupportLanguage);
-    this.app.get(`${PROBLEMS_API}/language`, verifyScope('PROBLANG.V'), routes.language.getLanguageInfo);
-    this.app.get(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.V'), routes.language.getLanguageInfo);
-    this.app.put(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.U'), routes.language.updateLanguageInfo);
-    this.app.delete(`${PROBLEMS_API}/language/:langId`, verifyScope('PROBLANG.D'), routes.language.deleteLanguage);
+    this.app.post(`${PROBLEMS_API}/language`, verifyScope('SHEETLANG.U'), routes.language.registerSupportLanguage);
+    this.app.get(`${PROBLEMS_API}/language`, verifyScope('SHEETLANG.V'), routes.language.getLanguageInfo);
+    this.app.get(`${PROBLEMS_API}/language/:langId`, verifyScope('SHEETLANG.V'), routes.language.getLanguageInfo);
+    this.app.get(`${PROBLEMS_API}/language/type/:typeId`, verifyScope('SHEETLANG.V'), routes.language.getLanguageInfo);
+    this.app.put(`${PROBLEMS_API}/language/:langId`, verifyScope('SHEETLANG.U'), routes.language.updateLanguageInfo);
+    this.app.delete(`${PROBLEMS_API}/language/:langId`, verifyScope('SHEETLANG.D'), routes.language.deleteLanguage);
 
-    // Problem Routes
-    this.app.post(`${PROBLEMS_API}/problem`, verifyScope('PROBLEM.U'), routes.problem.registerProblem);
-    // this.app.get(`${PROBLEMS_API}/problem`, verifyScope('PROBLEM.V'), );
-    // this.app.get(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.V'), );
+    // Sheet Routes
+    this.app.post(`${PROBLEMS_API}/sheet`, verifyScope('SHEET.U'), routes.sheet.registerSheet);
+    this.app.get(`${PROBLEMS_API}/sheet`, verifyScope('SHEET.R'), routes.sheet.getSheet);
+    this.app.get(`${PROBLEMS_API}/sheet/:sheetId`, verifyScope('SHEET.R'), routes.sheet.getSheet);
     // this.app.put(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.U'), );
     // this.app.delete(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.D'), );
     // this.app.get(`${PROBLEMS_API}/problem/solved`, );

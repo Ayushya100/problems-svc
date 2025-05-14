@@ -1,9 +1,9 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
-import { getLangInfoById, getAllLanguages } from '../../db/index.js';
+import { getLangInfoById, getAllLanguages, getLanguagesByTypeId } from '../../db/index.js';
 
-const log = logger('Controller: get-problem-type');
+const log = logger('Controller: get-language-info');
 
 const getLangById = async (langId, deletedRecord = false) => {
   try {
@@ -32,6 +32,7 @@ const getLangById = async (langId, deletedRecord = false) => {
       language: langDtl.language,
       metadata: langDtl.metadata,
       typeDesc: langDtl.type_desc,
+      default: langDtl.is_default,
       createdDate: convertToNativeTimeZone(langDtl.created_date),
       modifiedDate: convertToNativeTimeZone(langDtl.modified_date),
     };
@@ -56,11 +57,20 @@ const getLangById = async (langId, deletedRecord = false) => {
   }
 };
 
-const getAllLanguageInfo = async () => {
+const getAllLanguageInfo = async (typeId = null) => {
   try {
     log.info('Controller function to fetch all the language info from system initiated');
-    log.info('Call db query to fetch all languages from db');
-    let langDtl = await getAllLanguages();
+
+    let langDtl = {};
+    if (typeId) {
+      typeId = convertPrettyStringToId(typeId);
+      log.info('Call db query to fetch all languages from db');
+      langDtl = await getLanguagesByTypeId(typeId);
+    } else {
+      log.info('Call db query to fetch all languages from db');
+      langDtl = await getAllLanguages();
+    }
+
     if (langDtl.rowCount === 0) {
       log.info('No language info available to display');
       return {
@@ -77,6 +87,7 @@ const getAllLanguageInfo = async () => {
         id: convertIdToPrettyString(lang.id),
         langCode: lang.lang_cd,
         language: lang.language,
+        default: lang.is_default,
       };
     });
 

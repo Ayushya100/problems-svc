@@ -4,7 +4,7 @@ import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
 const log = logger('Router: register-support-language');
-const problemTypeController = controllers.problemTypeController;
+const sheetTypeController = controllers.sheetTypeController;
 const languageController = controllers.languageController;
 
 // API Function
@@ -12,9 +12,12 @@ const registerSupportLanguage = async (req, res, next) => {
   try {
     log.info('Register Support language request process initiated');
     const payload = req.body;
+    const userId = req.user.id;
+    payload.langCode = payload.langCode.toUpperCase();
+    console.log(payload);
 
-    log.info('Call controller function to verify if provided problem type exists');
-    const typeExist = await problemTypeController.getTypeById(payload.typeId);
+    log.info('Call controller function to verify if provided sheet type exists');
+    const typeExist = await sheetTypeController.getTypeById(payload.typeId);
     if (!typeExist.isValid) {
       throw typeExist;
     }
@@ -26,7 +29,7 @@ const registerSupportLanguage = async (req, res, next) => {
     }
 
     log.info('Call controller function to register new support language in system');
-    const languageDtl = await languageController.registerNewLanguageType(payload);
+    const languageDtl = await languageController.registerNewLanguageType(userId, payload);
     if (!languageDtl.isValid) {
       throw languageDtl;
     }

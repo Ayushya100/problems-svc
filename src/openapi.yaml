@@ -2,10 +2,10 @@ openapi: 3.0.0
 info:
   title: Problems Service
   version: 1.0.0
-  description: The Problems Service is responsible for managing dsa and api problems.
-    DSA Problem Management - Create and manage traditional data structures and algorithms problems with test cases and constraints.
+  description: The Problems Service is responsible for managing dsa and api sheets.
+    DSA Problem Management - Create and manage traditional data structures and algorithms sheets with test cases and constraints.
     API Problem Management - Create API challenges with input/output contracts, expected implementations, and evaluation criteria.
-    Category and Difficulty Tagging - Classify problems based on difficulty levels, types, and categories for better discoverability.
+    Category and Difficulty Tagging - Classify sheets based on difficulty levels, types, and categories for better discoverability.
 
 servers:
   - url: /problems-svc/api/v1.0
@@ -15,7 +15,7 @@ components:
   parameters:
     TypeIdParam:
       name: typeId
-      description: The ID of problem type to verify
+      description: The ID of sheet type to verify
       in: path
       required: true
       schema:
@@ -40,8 +40,17 @@ components:
         type: string
         pattern: '^[A-F0-9]{8}:[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{11}'
 
+    SheetIdParam:
+      name: sheetId
+      description: The ID of sheet to verify
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[A-F0-9]{8}:[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{11}'
+
   schemas:
-    registerProblemTypePayload:
+    registerSheetTypePayload:
       type: object
       properties:
         typeCode:
@@ -60,7 +69,7 @@ components:
         - typeDesc
         - executor
 
-    updateProblemTypePayload:
+    updateSheetTypePayload:
       type: object
       properties:
         typeDesc:
@@ -116,11 +125,12 @@ components:
           minLength: 1
         metadata:
           type: string
+        default:
+          type: boolean
       required:
         - typeId
         - langCode
         - language
-        - metadata
 
     updateLanguagePayload:
       type: object
@@ -136,7 +146,7 @@ components:
         metadata:
           type: string
 
-    registerProblemPayload:
+    registerSheetPayload:
       type: object
       properties:
         typeId:
@@ -149,7 +159,7 @@ components:
           minLength: 1
         description:
           type: string
-          description: Problem Description
+          description: Sheet Description
           minLength: 1
         difficulty:
           type: string
@@ -167,7 +177,7 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: '#/components/schemas/problemExampleData'
+            $ref: '#/components/schemas/sheetExampleData'
         constraints:
           type: array
           minItems: 1
@@ -177,7 +187,7 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: '#/components/schemas/problemHintsData'
+            $ref: '#/components/schemas/sheetHintsData'
         testCases:
           type: array
           minItems: 1
@@ -206,8 +216,8 @@ components:
         - codeSnippets
         - referenceSolutions
 
-    problemExampleData:
-      title: Schema for Problem Example Data
+    sheetExampleData:
+      title: Schema for Sheet Example Data
       type: object
       properties:
         id:
@@ -226,8 +236,8 @@ components:
         - output
         - explanation
 
-    problemHintsData:
-      title: Schema for Problem Hints Data
+    sheetHintsData:
+      title: Schema for Sheet Hints Data
       type: object
       properties:
         id:
@@ -242,7 +252,7 @@ components:
         - hint
 
     testCasesData:
-      title: Schema for Problem Test Cases
+      title: Schema for Sheet Test Cases
       type: object
       properties:
         input:
@@ -259,7 +269,7 @@ components:
         - isPublic
 
     codeSnippetsData:
-      title: Schema for Problem Code Snippets
+      title: Schema for Sheet Code Snippets
       type: object
       properties:
         id:
@@ -275,7 +285,7 @@ components:
          - snippet
 
     referenceSolutionsData:
-      title: Schema for Problem Reference Solutions
+      title: Schema for Sheet Reference Solutions
       type: object
       properties:
         languageId:
@@ -288,8 +298,8 @@ components:
         - languageId
         - solution
 
-    problemTagsData:
-      title: Schema for Problem Tags
+    sheetTagsData:
+      title: Schema for Sheet Tags
       type: object
       properties:
         id:
@@ -300,8 +310,8 @@ components:
         - id
         - tag
 
-    problemTestCasesData:
-      title: Schema for Problem Test Cases
+    sheetTestCasesData:
+      title: Schema for Sheet Test Cases
       type: object
       properties:
         id:
@@ -310,6 +320,8 @@ components:
           type: string
         output:
           type: string
+        isPublic:
+          type: boolean
       required:
         - id
         - input
@@ -326,8 +338,8 @@ components:
         hostname:
           type: string
 
-    getProblemTypeResponseData:
-      title: Schema for Get Problem Type Response Data
+    getSheetTypeResponseData:
+      title: Schema for Get Sheet Type Response Data
       type: object
       properties:
         id:
@@ -392,6 +404,8 @@ components:
         metadata:
           type: string
           nullable: true
+        default:
+          type: boolean
         typeCode:
           type: string
       required:
@@ -399,13 +413,15 @@ components:
         - langCode
         - language
 
-    getProblemResponseData:
-      title: Schema for retrieving Problem Details
+    getSheetResponseData:
+      title: Schema for retrieving Sheet Details
       type: object
       properties:
         id:
           type: string
-        problemCode:
+        typeId:
+          type: string
+        sheetCode:
           type: integer
         title:
           type: string
@@ -417,38 +433,74 @@ components:
           type: array
           items:
             type: string
+        createdDate:
+          type: string
+        modifiedDate:
+          type: string
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/problemTagsData'
+            $ref: '#/components/schemas/sheetTagsData'
         examples:
           type: array
           items:
-            $ref: '#/components/schemas/problemExampleData'
+            $ref: '#/components/schemas/sheetExampleData'
         hints:
           type: array
           items:
-            $ref: '#/components/schemas/problemHintsData'
+            $ref: '#/components/schemas/sheetHintsData'
         testCases:
           type: array
           items:
-            $ref: '#/components/schemas/problemTestCasesData'
+            $ref: '#/components/schemas/sheetTestCasesData'
         codeSnippet:
           type: array
           items:
             $ref: '#/components/schemas/codeSnippetsData'
+        referenceSolutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/referenceSolutionsData'
       required:
         - id
-        - problemCode
+        - sheetCode
         - title
         - description
         - difficulty
         - constraints
+        - createdDate
+        - modifiedDate
         - tags
         - examples
         - hints
         - testCases
         - codeSnippet
+
+    getAllSheetsResponseData:
+      title: Schema for retrieving all Sheet Details
+      type: object
+      properties:
+        id:
+          type: string
+        typeId:
+          type: string
+        sheetCode:
+          type: integer
+        title:
+          type: string
+        difficulty:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/sheetTagsData'
+      required:
+        - id
+        - typeId
+        - sheetCode
+        - title
+        - difficulty
+        - tags
 
     healthCheckSuccessResponse:
       type: object
@@ -471,7 +523,7 @@ components:
         data:
           $ref: '#/components/schemas/healthCheckData'
 
-    registerProblemTypeResponse:
+    registerSheetTypeResponse:
       type: object
       properties:
         statusCode:
@@ -491,7 +543,7 @@ components:
           example: true
         data:
           type: object
-          $ref: '#/components/schemas/getProblemTypeResponseData'
+          $ref: '#/components/schemas/getSheetTypeResponseData'
       required:
         - statusCode
         - type
@@ -500,7 +552,7 @@ components:
         - success
         - data
 
-    getAllProblemTypeResponse:
+    getAllSheetTypeResponse:
       type: object
       properties:
         statusCode:
@@ -521,7 +573,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/getProblemTypeResponseData'
+            $ref: '#/components/schemas/getSheetTypeResponseData'
       required:
         - statusCode
         - type
@@ -530,7 +582,7 @@ components:
         - success
         - data
 
-    getProblemTypeByIdResponse:
+    getSheetTypeByIdResponse:
       type: object
       properties:
         statusCode:
@@ -550,7 +602,7 @@ components:
           example: true
         data:
           type: object
-          $ref: '#/components/schemas/getProblemTypeResponseData'
+          $ref: '#/components/schemas/getSheetTypeResponseData'
       required:
         - statusCode
         - type
@@ -735,7 +787,7 @@ components:
         - success
         - data
 
-    registerProblemResponse:
+    getSheetByIDResponse:
       type: object
       properties:
         statusCode:
@@ -755,7 +807,37 @@ components:
           example: true
         data:
           type: object
-          $ref: '#/components/schemas/getProblemResponseData'
+          $ref: '#/components/schemas/getSheetResponseData'
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    getAllSheetsResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/getAllSheetsResponseData'
       required:
         - statusCode
         - type
@@ -985,24 +1067,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
-  /problem/type:
+  /sheet/type:
     post:
-      operationId: registerProblemType
-      summary: Register New Problem Type
-      description: An API to register new problem type in the system.
+      operationId: registerSheetType
+      summary: Register New Sheet Type
+      description: An API to register new sheet type in the system.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/registerProblemTypePayload'
+              $ref: '#/components/schemas/registerSheetTypePayload'
       responses:
         '201':
           description: REQUEST_COMPLETED
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registerProblemTypeResponse'
+                $ref: '#/components/schemas/registerSheetTypeResponse'
         '400':
           description: BAD_REQUEST
           content:
@@ -1041,16 +1123,16 @@ paths:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
     get:
-      operationId: getAllProblemType
-      summary: Get all Problem Type
-      description: An API to retrieve all problem types from the system.
+      operationId: getAllSheetType
+      summary: Get all Sheet Type
+      description: An API to retrieve all sheet types from the system.
       responses:
         '200':
           description: SUCCESS
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getAllProblemTypeResponse'
+                $ref: '#/components/schemas/getAllSheetTypeResponse'
         '204':
           description: CONTENT_NOT_AVAILABLE
           content:
@@ -1082,11 +1164,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
-  /problem/type/{typeId}:
+  /sheet/type/{typeId}:
     get:
-      operationId: getProblemTypeById
-      summary: Get Problem Type by ID
-      description: An API to retrieve the problem type info for requested ID.
+      operationId: getSheetTypeById
+      summary: Get Sheet Type by ID
+      description: An API to retrieve the sheet type info for requested ID.
       parameters:
         - $ref: '#/components/parameters/TypeIdParam'
       responses:
@@ -1095,7 +1177,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getProblemTypeByIdResponse'
+                $ref: '#/components/schemas/getSheetTypeByIdResponse'
         '400':
           description: BAD_REQUEST
           content:
@@ -1128,9 +1210,9 @@ paths:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
     put:
-      operationId: updateProblemTypeById
-      summary: Update Problem Type by ID
-      description: An API to update the problem description for requested ID.
+      operationId: updateSheetTypeById
+      summary: Update Sheet Type by ID
+      description: An API to update the sheet description for requested ID.
       parameters:
         - $ref: '#/components/parameters/TypeIdParam'
       requestBody:
@@ -1138,14 +1220,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/updateProblemTypePayload'
+              $ref: '#/components/schemas/updateSheetTypePayload'
       responses:
         '200':
           description: SUCCESS
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getProblemTypeByIdResponse'
+                $ref: '#/components/schemas/getSheetTypeByIdResponse'
         '400':
           description: BAD_REQUEST
           content:
@@ -1178,8 +1260,8 @@ paths:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
     delete:
-      summary: Delete Problem Type by ID
-      description: An API to delete the problem type for requested ID.
+      summary: Delete Sheet Type by ID
+      description: An API to delete the sheet type for requested ID.
       parameters:
         - $ref: '#/components/parameters/TypeIdParam'
       responses:
@@ -1188,7 +1270,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getProblemTypeByIdResponse'
+                $ref: '#/components/schemas/getSheetTypeByIdResponse'
         '400':
           description: BAD_REQUEST
           content:
@@ -1698,24 +1780,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/internalServerErrorResponse'
 
-  /problem:
+  /language/type/{typeId}:
+    get:
+      operationId:  getLanguageBySheetTypeId
+      summary: Get Languages Info by Sheet Type ID
+      description: An API to retrieve the language info for requested sheet type ID.
+      parameters:
+        - $ref: '#/components/parameters/TypeIdParam'
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllLanguagesResponse'
+        '204':
+          description: CONTENT_NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noContentResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /sheet:
     post:
-      operationId: registerProblems
-      summary: Register new Problems
-      description: An API to register new problem in system
+      operationId: registerSheet
+      summary: Register new Sheets
+      description: An API to register new sheet in system
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/registerProblemPayload'
+              $ref: '#/components/schemas/registerSheetPayload'
       responses:
         '201':
           description: REQUEST_COMPLETED
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registerProblemResponse'
+                $ref: '#/components/schemas/getSheetByIDResponse'
         '400':
           description: BAD_REQUEST
           content:
@@ -1764,6 +1891,93 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/unprocessableContent'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+    get:
+      operationId: getAllSheets
+      summary: Get all Sheets
+      description: An API to retrieve all sheets basic info from system
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllSheetsResponse'
+        '204':
+          description: CONTENT_NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noContentResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /sheet/{sheetId}:
+    get:
+      operationId: getSheetDetailById
+      summary: Get Sheet by ID
+      description: An API to retrieve sheet details for requested ID from system
+      parameters:
+        - $ref: '#/components/parameters/SheetIdParam'
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getSheetByIDResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
         '500':
           description: INTERNAL_SERVER_ERROR
           content:
