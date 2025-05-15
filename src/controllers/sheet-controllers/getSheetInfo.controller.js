@@ -11,6 +11,7 @@ import {
   getAllSheetInfo,
   getLanguagesByTypeId,
   getSheetSolutionsById,
+  getLangInfoById,
 } from '../../db/index.js';
 
 const log = logger('Controller: get-sheet-type');
@@ -344,4 +345,56 @@ const getSheetDetailsById = async (sheetId, deletedRecord = false) => {
   }
 };
 
-export { getSheetById, getAllSheets, getSheetDetailsById };
+const getSheetSnippetById = async (sheetId, langId) => {
+  try {
+    log.info('Controller function to fetch the requested snippet detail for the provided language id process initiated');
+    sheetId = convertPrettyStringToId(sheetId);
+    langId = convertPrettyStringToId(langId);
+    let langDtl = await getLangInfoById(langId, false);
+    if (langDtl.rowCount === 0) {
+      log.error('No language info found');
+      return {
+        status: 400,
+        message: 'Language not found',
+        data: [],
+        errors: [],
+        stack: 'getSheetSnippetById function call',
+        isValid: false,
+      };
+    }
+    langDtl = langDtl.rows[0];
+    const langCode = langDtl.lang_cd;
+
+    const snippetDtl = await getSnippetsById(sheetId, false, langCode);
+    if (!snippetDtl.isValid || data.codeSnippet.length === 0) {
+      return {
+        status: 404,
+        message: '',
+        data: [],
+        errors: [],
+        stack: 'getSheetSnippetById function call',
+        isValid: false,
+      };
+    }
+
+    log.success('Sheet Snippet fetched successfully');
+    return {
+      status: 200,
+      message: 'Snippet record found',
+      data: data.codeSnippet[0],
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('Error while fetching sheet snippet detail for requested language id from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching sheet snippet detail for requested lang id from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+export { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById };
