@@ -227,7 +227,6 @@ components:
           minLength: 1
         output:
           type: string
-          minLength: 1
         explanation:
           type: string
           nullable: true
@@ -259,7 +258,6 @@ components:
           minLength: 1
         output:
           type: string
-          minLength: 1
         isPublic:
           type: boolean
       required:
@@ -2103,6 +2101,51 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/getSheetSolutionsByIDResponse'
+          '400':
+            description: BAD_REQUEST
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/badRequestResponse'
+          '401':
+            description: UNAUTHORIZED
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/unauthorizedResponse'
+          '403':
+            description: FORBIDDEN
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/forbiddenResponse'
+          '404':
+            description: NOT_FOUND
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/notFound'
+          '500':
+            description: INTERNAL_SERVER_ERROR
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /sheet/{sheetId}/detail:
+    get:
+      operationId: getSheetDetailsById
+      summary: Get Sheet Details by ID
+      description: An API to retrieve sheet details for requested sheet ID from system
+      parameters:
+        - $ref: '#/components/parameters/SheetIdParam'
+      responses:
+          '200':
+            description: SUCCESS
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/getSheetByIDResponse'
           '400':
             description: BAD_REQUEST
             content:
