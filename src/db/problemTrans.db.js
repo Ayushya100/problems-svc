@@ -61,4 +61,38 @@ const saveSheetRecords = async (problemPayload, tagPayload, examplePayload, hint
   return result;
 };
 
-export { saveSheetRecords };
+const deleteSheetRecords = async (sheetId, userId) => {
+  await trxRunner(async (execute) => {
+    const problemQuery = `UPDATE PROBLEMS SET IS_DELETED = true, MODIFIED_BY = ? WHERE ID = ? AND IS_DELETED = false;`;
+    const problemParams = [userId, sheetId];
+    await execute(problemQuery, problemParams);
+
+    const tagQuery = `UPDATE PROBLEM_TAGS SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const tagParams = [userId, sheetId];
+    await execute(tagQuery, tagParams);
+
+    const exampleQuery = `UPDATE PROBLEM_EXAMPLES SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const exampleParams = [userId, sheetId];
+    await execute(exampleQuery, exampleParams);
+
+    const hintQuery = `UPDATE PROBLEM_HINTS SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const hintParmas = [userId, sheetId];
+    await execute(hintQuery, hintParmas);
+
+    const testCaseQuery = `UPDATE PROBLEM_TEST_CASES SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const testCaseParams = [userId, sheetId];
+    await execute(testCaseQuery, testCaseParams);
+
+    const snippetQuery = `UPDATE PROBLEM_SNIPPET SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const snippetParams = [userId, sheetId];
+    await execute(snippetQuery, snippetParams);
+
+    const solutionQuery = `UPDATE PROBLEM_SOLUTION SET IS_DELETED = true, MODIFIED_BY = ? WHERE PROBLEM_ID = ? AND IS_DELETED = false;`;
+    const solutionParams = [userId, sheetId];
+    await execute(solutionQuery, solutionParams);
+
+    return null;
+  });
+};
+
+export { saveSheetRecords, deleteSheetRecords };

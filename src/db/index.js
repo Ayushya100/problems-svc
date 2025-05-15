@@ -36,7 +36,7 @@ import {
   getAllSheetInfo,
 } from './problem.db.js';
 
-import { saveSheetRecords } from './problemTrans.db.js';
+import { saveSheetRecords, deleteSheetRecords } from './problemTrans.db.js';
 
 export {
   isSheetExistAvailable,
@@ -73,4 +73,5 @@ export {
   getSheetSolutionsById,
   saveSheetRecords,
   getAllSheetInfo,
+  deleteSheetRecords,
 };
