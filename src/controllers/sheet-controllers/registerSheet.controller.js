@@ -261,7 +261,7 @@ const registerNewSheet = async (userId, userApproveStatus, payload) => {
       examplePayload.push({
         input: example.input,
         output: example.output,
-        explanation: example.explanation,
+        explanation: example.explanation || null,
       });
     }
 
