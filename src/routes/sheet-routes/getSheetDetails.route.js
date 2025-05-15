@@ -3,13 +3,13 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Route: get-sheet-solutions');
+const log = logger('Route: get-sheet-details');
 const sheetController = controllers.sheetController;
 
 // API Function
-const getSheetSolutions = async (req, res, next) => {
+const getSheetDetails = async (req, res, next) => {
   try {
-    log.info('Get sheet solutions request process initiated');
+    log.info('Get sheet details request process initiated');
     const sheetId = req.params.sheetId;
 
     log.info('Call controller function to validate if sheet for requested id exist');
@@ -18,8 +18,8 @@ const getSheetSolutions = async (req, res, next) => {
       throw sheetDtl;
     }
 
-    log.info('Call controller function to fetch sheet reference solutions for requested sheet id');
-    const solutionDtl = await sheetController.getSolutionsBySheetId(sheetId);
+    log.info('Call controller function to fetch sheet details for requested sheet id');
+    const solutionDtl = await sheetController.getSheetDetailsById(sheetId);
     if (!solutionDtl.isValid) {
       throw solutionDtl;
     }
@@ -35,4 +35,4 @@ const getSheetSolutions = async (req, res, next) => {
   }
 };
 
-export default getSheetSolutions;
+export default getSheetDetails;
