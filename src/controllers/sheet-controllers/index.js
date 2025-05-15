@@ -2,6 +2,7 @@
 
 import { verifySheetExist, verifyTagsForSheet, validateSolutions, registerNewSheet } from './registerSheet.controller.js';
 import { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById, getSheetBasicInfoById, getSolutionsBySheetId } from './getSheetInfo.controller.js';
+import { deleteSheetById } from './deleteSheet.controller.js';
 
 export default {
   verifySheetExist,
@@ -14,4 +15,5 @@ export default {
   getSheetSnippetById,
   getSheetBasicInfoById,
   getSolutionsBySheetId,
+  deleteSheetById,
 };
