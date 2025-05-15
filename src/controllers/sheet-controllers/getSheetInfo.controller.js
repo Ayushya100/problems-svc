@@ -18,8 +18,9 @@ const log = logger('Controller: get-sheet-type');
 
 const data = {};
 
-const getSheetBasicInfoById = async (sheetId, deletedRecord) => {
+const getSheetBasicInfoById = async (sheetId, deletedRecord = false) => {
   try {
+    sheetId = convertPrettyStringToId(sheetId);
     log.info(`Call db queries to fetch sheet details for provided id: ${sheetId}`);
     let sheetDtl = await getSheetInfoById(sheetId, deletedRecord);
     if (sheetDtl.rowCount === 0) {
@@ -47,6 +48,9 @@ const getSheetBasicInfoById = async (sheetId, deletedRecord) => {
 
     log.success('Sheet basic details for requested id fetched successfully');
     return {
+      status: 200,
+      message: 'Sheet info found',
+      data: data,
       isValid: true,
     };
   } catch (err) {
@@ -163,6 +167,43 @@ const getSnippetsById = async (sheetId, deletedRecord, langCode = null) => {
     return {
       status: 500,
       message: 'An error occurred while fetching sheet snippet for requested id from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+const getSolutionsBySheetId = async (sheetId) => {
+  try {
+    sheetId = convertPrettyStringToId(sheetId);
+    log.info('Call db query to fetch all reference solutions for requested sheet id');
+    data.referenceSolutions = [];
+    let sheetSolutionsDtl = await getSheetSolutionsById(sheetId);
+    if (sheetSolutionsDtl.rowCount > 0) {
+      sheetSolutionsDtl = sheetSolutionsDtl.rows;
+      for (const solution of sheetSolutionsDtl) {
+        data.referenceSolutions.push({
+          id: convertIdToPrettyString(solution.solution_id),
+          languageId: convertIdToPrettyString(solution.language_id),
+          solution: solution.solution,
+        });
+      }
+    }
+
+    log.success('Sheet reference solutions for requested sheet id fetched completely');
+    return {
+      status: 200,
+      message: 'Reference solutions found',
+      data: data.referenceSolutions,
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('An error occurred while fetching sheet reference solutions for requested id from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching reference solutions for requested id from system',
       data: [],
       errors: err,
       stack: err.stack,
@@ -311,18 +352,9 @@ const getSheetDetailsById = async (sheetId, deletedRecord = false) => {
       throw sheetSnippetDtl;
     }
 
-    log.info('Call db query to fetch all reference solutions for requested sheet id');
-    data.referenceSolutions = [];
-    let sheetSolutionsDtl = await getSheetSolutionsById(sheetId);
-    if (sheetSolutionsDtl.rowCount > 0) {
-      sheetSolutionsDtl = sheetSolutionsDtl.rows;
-      for (const solution of sheetSolutionsDtl) {
-        data.referenceSolutions.push({
-          id: convertIdToPrettyString(solution.solution_id),
-          languageId: convertIdToPrettyString(solution.language_id),
-          solution: solution.solution,
-        });
-      }
+    const sheetSolutionsDtl = await getSolutionsBySheetId(sheetId);
+    if (!sheetSolutionsDtl.isValid) {
+      throw sheetSolutionsDtl;
     }
 
     log.success('Requested Sheet details fetched successfully');
@@ -397,4 +429,4 @@ const getSheetSnippetById = async (sheetId, langId) => {
   }
 };
 
-export { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById };
+export { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById, getSheetBasicInfoById, getSolutionsBySheetId };

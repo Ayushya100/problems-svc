@@ -1,7 +1,7 @@
 'use strict';
 
 import { verifySheetExist, verifyTagsForSheet, validateSolutions, registerNewSheet } from './registerSheet.controller.js';
-import { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById } from './getSheetInfo.controller.js';
+import { getSheetById, getAllSheets, getSheetDetailsById, getSheetSnippetById, getSheetBasicInfoById, getSolutionsBySheetId } from './getSheetInfo.controller.js';
 
 export default {
   verifySheetExist,
@@ -12,4 +12,6 @@ export default {
   getAllSheets,
   getSheetDetailsById,
   getSheetSnippetById,
+  getSheetBasicInfoById,
+  getSolutionsBySheetId,
 };
