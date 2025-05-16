@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
-import { getTypeInfoById, getAllTypeInfo } from '../../db/index.js';
+import { getTypeInfoById, getAllTypeInfo, getTypeInfoByCode } from '../../db/index.js';
 
 const log = logger('Controller: get-sheet-type');
 
@@ -100,4 +100,54 @@ const getAllSheetTypes = async () => {
   }
 };
 
-export { getTypeById, getAllSheetTypes };
+const getSheetByType = async (typeCd, deletedRecord = false) => {
+  try {
+    log.info('Controller function fetch sheet type by type code process initiated');
+    typeCd = typeCd.toUpperCase().trim();
+
+    log.info(`Call db query to fetch type details for requested code: ${typeCd}`);
+    let typeDtl = await getTypeInfoByCode(typeCd, deletedRecord);
+    if (typeDtl.rowCount === 0) {
+      log.error('Sheet type for requested code does not exists in system');
+      return {
+        status: 404,
+        message: 'Sheet type not found',
+        data: [],
+        errors: [],
+        stack: 'getSheetByType function call',
+        isValid: false,
+      };
+    }
+
+    typeDtl = typeDtl.rows[0];
+    typeDtl = {
+      id: convertIdToPrettyString(typeDtl.id),
+      typeCode: typeDtl.type_cd,
+      typeDesc: typeDtl.type_desc,
+      executor: typeDtl.executor,
+      core: typeDtl.core,
+      createdDate: convertToNativeTimeZone(typeDtl.created_date),
+      modifiedDate: convertToNativeTimeZone(typeDtl.modified_date),
+    };
+
+    log.success('Requested Sheet type details fetched successfully');
+    return {
+      status: 200,
+      message: 'Sheet type fetched successfully',
+      data: typeDtl,
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('Error while fetching sheet type for requested type code from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching sheet type for requested type code from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
+export { getTypeById, getAllSheetTypes, getSheetByType };

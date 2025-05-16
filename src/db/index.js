@@ -34,6 +34,8 @@ import {
   getSheetSnippetsById,
   getSheetSolutionsById,
   getAllSheetInfo,
+  getTypeInfoByCode,
+  getTagInfoByCd,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords } from './problemTrans.db.js';
@@ -74,4 +76,6 @@ export {
   saveSheetRecords,
   getAllSheetInfo,
   deleteSheetRecords,
+  getTypeInfoByCode,
+  getTagInfoByCd,
 };

@@ -270,45 +270,100 @@ const getSheetById = async (sheetId, deletedRecord = false) => {
   }
 };
 
-const getAllSheets = async () => {
+const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty = null) => {
   try {
     log.info('Call controller function to fetch all sheets information process initiated');
-    log.info('Call db queries to fetch sheet details');
-    let sheetDtl = await getAllSheetInfo();
-
-    if (sheetDtl.rowCount === 0) {
-      log.info('No sheet found');
-      return {
-        status: 204,
-        message: 'No sheet found',
-        data: {},
-        isValid: true,
-      };
+    if (typeId) {
+      typeId = convertPrettyStringToId(typeId);
     }
-    sheetDtl = sheetDtl.rows;
-
-    const data = [];
-    for (const sheet of sheetDtl) {
-      const tags = [];
-      let tagsInfo = await getSheetTagsById(sheet.id, false);
-      if (tagsInfo.rowCount > 0) {
-        tagsInfo = tagsInfo.rows;
-        for (const tag of tagsInfo) {
-          tags.push({
-            id: convertIdToPrettyString(tag.tag_id),
-            tag: tag.tag_desc,
-          });
-        }
+    if (tagId) {
+      tagId = convertPrettyStringToId(tagId);
+    }
+    if (difficulty) {
+      difficulty = difficulty.trim();
+      difficulty = difficulty[0].toUpperCase() + difficulty.slice(1);
+      
+      if (difficulty !== 'Easy' && difficulty !== 'Medium' && difficulty !== 'Hard') {
+        log.error('Incorrect difficulty type provided');
+        return {
+          status: 400,
+          message: 'Incorrect difficulty type provided',
+          data: [],
+          errors: [],
+          stack: 'getAllSheets function call',
+          isValid: false
+        };
       }
+    }
 
-      data.push({
-        id: convertIdToPrettyString(sheet.id),
-        typeId: convertIdToPrettyString(sheet.type_id),
-        sheetCode: sheet.problem_cd,
-        title: sheet.problem_title,
-        difficulty: sheet.difficulty,
-        tags: tags,
-      });
+    const offset = (page - 1) * limit;
+    let sheetDtl = null;
+    let data = [];
+
+    log.info('Call db queries to fetch sheet details');
+    if (tagId) {
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
+      if (sheetDtl.rowCount === 0) {
+        log.info('No sheet found');
+        return {
+          status: 204,
+          message: 'No sheet found',
+          data: [],
+          isValid: true,
+        };
+      }
+      sheetDtl = sheetDtl.rows;
+
+      for (const sheet of sheetDtl) {
+        data.push({
+          id: convertIdToPrettyString(sheet.id),
+          typeId: convertIdToPrettyString(sheet.type_id),
+          sheetCode: sheet.problem_cd,
+          title: sheet.problem_title,
+          difficulty: sheet.difficulty,
+          tags: [
+            {
+              id: convertIdToPrettyString(sheet.tag_id),
+              tag: sheet.tag_desc,
+            },
+          ],
+        });
+      }
+    } else {
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
+      if (sheetDtl.rowCount === 0) {
+        log.info('No sheet found');
+        return {
+          status: 204,
+          message: 'No sheet found',
+          data: [],
+          isValid: true,
+        };
+      }
+      sheetDtl = sheetDtl.rows;
+
+      for (const sheet of sheetDtl) {
+        const tags = [];
+        let tagsInfo = await getSheetTagsById(sheet.id, false);
+        if (tagsInfo.rowCount > 0) {
+          tagsInfo = tagsInfo.rows;
+          for (const tag of tagsInfo) {
+            tags.push({
+              id: convertIdToPrettyString(tag.tag_id),
+              tag: tag.tag_desc,
+            });
+          }
+        }
+
+        data.push({
+          id: convertIdToPrettyString(sheet.id),
+          typeId: convertIdToPrettyString(sheet.type_id),
+          sheetCode: sheet.problem_cd,
+          title: sheet.problem_title,
+          difficulty: sheet.difficulty,
+          tags: tags,
+        });
+      }
     }
 
     log.success('Sheets information retrieved successfully');

@@ -161,9 +161,14 @@ const deleteLanguageInfo = async (langId, userId) => {
   return exec(query, params);
 };
 
-const isSheetExist = async (title) => {
-  const query = `SELECT ID FROM PROBLEMS WHERE PROBLEM_TITLE = ? AND IS_DELETED = false;`;
+const isSheetExist = async (title, sheetId) => {
+  let query = `SELECT ID FROM PROBLEMS WHERE PROBLEM_TITLE = ? AND IS_DELETED = false`;
   const params = [title];
+
+  if (sheetId) {
+    query += ` ID <> ?;`;
+    params.push(sheetId);
+  }
   return exec(query, params);
 };
 
@@ -198,7 +203,7 @@ const getSheetTagsById = async (sheetId, deletedRecord) => {
     FROM PROBLEMS P
     INNER JOIN PROBLEM_TAGS T ON T.PROBLEM_ID = P.ID AND T.IS_DELETED = false
     INNER JOIN TAGS TAG ON TAG.ID = T.TAG_ID AND TAG.IS_DELETED = false
-    WHERE P.ID = ? AND P.IS_DELETED = ?;`;
+    WHERE P.ID = ? AND P.IS_DELETED = ?`;
   const params = [sheetId, deletedRecord];
   return exec(query, params);
 };
@@ -259,11 +264,54 @@ const getSheetSolutionsById = async (sheetId) => {
   return exec(query, params);
 };
 
-const getAllSheetInfo = async () => {
-  const query = `SELECT ID, TYPE_ID, PROBLEM_CD, PROBLEM_TITLE, DIFFICULTY
-    FROM PROBLEMS
-    WHERE IS_DELETED = false AND APPROVED = true;`;
-  return exec(query);
+const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset, difficulty) => {
+  let query = `SELECT P.ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.DIFFICULTY`;
+  const params = [];
+
+  if (tagId) {
+    query += `, TAG.ID TAG_ID, TAG.TAG_DESC`;
+  }
+  query += ` FROM PROBLEMS P`;
+
+  if (tagId) {
+    query += ` INNER JOIN PROBLEM_TAGS T ON T.PROBLEM_ID = P.ID AND T.IS_DELETED = false
+      INNER JOIN TAGS TAG ON TAG.ID = T.TAG_ID AND TAG.IS_DELETED = false AND TAG.ID = ?`;
+    params.push(tagId);
+  }
+
+  query += ` WHERE P.IS_DELETED = false AND P.APPROVED = true`;
+
+  if (typeId) {
+    query += ` AND P.TYPE_ID = ?`;
+    params.push(typeId);
+  }
+
+  if (difficulty) {
+    query += ` AND P.DIFFICULTY = ?`;
+    params.push(difficulty);
+  }
+
+  query += ` ORDER BY PROBLEM_CD
+    LIMIT ? OFFSET ?;`;
+  params.push(limit, offset);
+  return exec(query, params);
+};
+
+const getTypeInfoByCode = async (typeCd, deletedRecord) => {
+  const query = `SELECT ID, TYPE_CD, TYPE_DESC, EXECUTOR, CORE, CREATED_DATE, MODIFIED_DATE
+        FROM PROBLEM_TYPE
+        WHERE IS_DELETED = ? AND TYPE_CD = ?;`;
+  const params = [deletedRecord, typeCd];
+
+  return exec(query, params);
+};
+
+const getTagInfoByCd = async (tagCd, deletedRecord) => {
+  const query = `SELECT ID, TAG_CD, TAG_DESC, CORE, CREATED_DATE, MODIFIED_DATE FROM TAGS
+    WHERE IS_DELETED = ? AND TAG_CD = ?;`;
+  const params = [deletedRecord, tagCd];
+
+  return exec(query, params);
 };
 
 export {
@@ -300,4 +348,6 @@ export {
   getSheetSnippetsById,
   getSheetSolutionsById,
   getAllSheetInfo,
+  getTypeInfoByCode,
+  getTagInfoByCd,
 };
