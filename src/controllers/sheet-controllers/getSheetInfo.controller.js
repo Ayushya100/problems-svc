@@ -270,7 +270,7 @@ const getSheetById = async (sheetId, deletedRecord = false) => {
   }
 };
 
-const getAllSheets = async (typeId = null, tagId = null, page, limit) => {
+const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty = null) => {
   try {
     log.info('Call controller function to fetch all sheets information process initiated');
     if (typeId) {
@@ -279,6 +279,22 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit) => {
     if (tagId) {
       tagId = convertPrettyStringToId(tagId);
     }
+    if (difficulty) {
+      difficulty = difficulty.trim();
+      difficulty = difficulty[0].toUpperCase() + difficulty.slice(1);
+      
+      if (difficulty !== 'Easy' && difficulty !== 'Medium' && difficulty !== 'Hard') {
+        log.error('Incorrect difficulty type provided');
+        return {
+          status: 400,
+          message: 'Incorrect difficulty type provided',
+          data: [],
+          errors: [],
+          stack: 'getAllSheets function call',
+          isValid: false
+        };
+      }
+    }
 
     const offset = (page - 1) * limit;
     let sheetDtl = null;
@@ -286,7 +302,7 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit) => {
 
     log.info('Call db queries to fetch sheet details');
     if (tagId) {
-      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset);
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
       if (sheetDtl.rowCount === 0) {
         log.info('No sheet found');
         return {
@@ -314,7 +330,7 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit) => {
         });
       }
     } else {
-      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset);
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
       if (sheetDtl.rowCount === 0) {
         log.info('No sheet found');
         return {

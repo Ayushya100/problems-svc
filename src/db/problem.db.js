@@ -264,7 +264,7 @@ const getSheetSolutionsById = async (sheetId) => {
   return exec(query, params);
 };
 
-const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset) => {
+const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset, difficulty) => {
   let query = `SELECT P.ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.DIFFICULTY`;
   const params = [];
 
@@ -284,6 +284,11 @@ const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset) => {
   if (typeId) {
     query += ` AND P.TYPE_ID = ?`;
     params.push(typeId);
+  }
+
+  if (difficulty) {
+    query += ` AND P.DIFFICULTY = ?`;
+    params.push(difficulty);
   }
 
   query += ` ORDER BY PROBLEM_CD

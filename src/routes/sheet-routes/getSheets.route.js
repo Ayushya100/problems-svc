@@ -17,6 +17,7 @@ const getSheet = async (req, res, next) => {
     const langId = req.params.langId;
     const type = req.query.type;
     const tag = req.query.tag;
+    const difficulty = req.query.difficulty;
     const page = req.query.page || 1;
     let limit = req.query.limit || 10;
 
@@ -59,7 +60,7 @@ const getSheet = async (req, res, next) => {
       sheetDtl = await sheetController.getSheetById(sheetId);
     } else {
       log.info('Call controller function to fetch all sheets from system');
-      sheetDtl = await sheetController.getAllSheets(typeId, tagId, page, limit);
+      sheetDtl = await sheetController.getAllSheets(typeId, tagId, page, limit, difficulty);
     }
     if (!sheetDtl.isValid) {
       throw sheetDtl;

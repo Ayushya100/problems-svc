@@ -1983,6 +1983,12 @@ paths:
             type: string
           required: false
           description: Filter sheets by page limit
+        - in: query
+          name: difficulty
+          schema:
+            type: string
+          required: false
+          description: Filter sheets by sheet difficulty
       responses:
         '200':
           description: SUCCESS
