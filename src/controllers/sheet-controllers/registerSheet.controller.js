@@ -9,11 +9,16 @@ const log = logger('Controller: register-sheet');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const verifySheetExist = async (title) => {
+const verifySheetExist = async (title, sheetId = null) => {
   try {
     log.info('Controller function to validate if the sheet with same title already exist in system activated');
+    if (sheetId) {
+      sheetId = convertPrettyStringToId(sheetId);
+    }
+    title = title.trim();
+
     log.info('Call db query to validate if sheet with title already exists');
-    const sheetDtl = await isSheetExist(title);
+    const sheetDtl = await isSheetExist(title, sheetId);
     if (sheetDtl.rowCount > 0) {
       log.error('Sheet with same title already exists in system');
       return {
@@ -245,7 +250,7 @@ const registerNewSheet = async (userId, userApproveStatus, payload) => {
     const sheetPayload = {
       typeId: convertPrettyStringToId(payload.typeId),
       sheetCode: sheetCode,
-      sheetTitle: payload.title,
+      sheetTitle: payload.title.trim(),
       sheetDesc: payload.description,
       difficulty: payload.difficulty,
       constraints: payload.constraints,

@@ -44,10 +44,8 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/sheet/:sheetId/snippet/:langId`, verifyScope('SHEET.R'), routes.sheet.getSheet);
     this.app.get(`${PROBLEMS_API}/sheet/:sheetId/solution`, verifyScope('SHEET.R'), routes.sheet.getSheetSolutions);
     this.app.get(`${PROBLEMS_API}/sheet/:sheetId/detail`, verifyScope('SHEET.V'), routes.sheet.getSheetDetails);
-    // this.app.put(`${PROBLEMS_API}/problem/:problemId`, verifyScope('PROBLEM.U'), );
+    this.app.put(`${PROBLEMS_API}/sheet/:sheetId`, verifyScope('SHEET.U'), routes.sheet.updateSheetInfo);
     this.app.delete(`${PROBLEMS_API}/sheet/:sheetId`, verifyScope('SHEET.D'), routes.sheet.deleteSheetInfo);
-    // this.app.get(`${PROBLEMS_API}/problem/solved`, );
-    // this.app.get(`${PROBLEMS_API}/problem/solved/:problemId`, );
   }
 }
 

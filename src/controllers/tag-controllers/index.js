@@ -1,7 +1,7 @@
 'use strict';
 
 import { verifyTagExist, registerNewTag } from './registerTag.controller.js';
-import { getTagById, getAllTagInfo } from './getTag.controller.js';
+import { getTagById, getAllTagInfo, getTagByCode } from './getTag.controller.js';
 import { updateTagById } from './updateTag.controller.js';
 import { deleteTagById } from './deleteTag.controller.js';
 
@@ -12,4 +12,5 @@ export default {
   getAllTagInfo,
   updateTagById,
   deleteTagById,
+  getTagByCode,
 };

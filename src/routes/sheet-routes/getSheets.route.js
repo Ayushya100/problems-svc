@@ -5,6 +5,8 @@ import controllers from '../../controllers/index.js';
 
 const log = logger('Route: get-sheet-type');
 const sheetController = controllers.sheetController;
+const sheetTypeController = controllers.sheetTypeController;
+const tagController = controllers.tagController;
 const languageController = controllers.languageController;
 
 // API Function
@@ -13,10 +15,38 @@ const getSheet = async (req, res, next) => {
     log.info('Get sheet types request process initiated');
     const sheetId = req.params.sheetId;
     const langId = req.params.langId;
+    const type = req.query.type;
+    const tag = req.query.tag;
+    const page = req.query.page || 1;
+    let limit = req.query.limit || 10;
+
+    if (req.query.limit && (req.query.limit < 5 || req.query.limit > 20)) {
+      limit = 10;
+    }
+
+    let typeId = null;
+    if (type) {
+      log.info('Call controller function to validate if provided sheet type exist');
+      const validTypeDtl = await sheetTypeController.getSheetByType(type);
+      if (!validTypeDtl.isValid) {
+        throw validTypeDtl;
+      }
+      typeId = validTypeDtl.data.id;
+    }
+
+    let tagId = null;
+    if (tag) {
+      log.info('Call controller function to validate if provided sheet tag exist');
+      const tagDtl = await tagController.getTagByCode(tag);
+      if (!tagDtl.isValid) {
+        throw tagDtl;
+      }
+      tagId = tagDtl.data.id;
+    }
 
     let sheetDtl = {};
     if (sheetId && langId) {
-      log.info('Call controller funciton to validate if provided language id exist');
+      log.info('Call controller function to validate if provided language id exist');
       const validLangId = await languageController.getLangById(langId, false);
       if (!validLangId.isValid) {
         throw validLangId;
@@ -29,7 +59,7 @@ const getSheet = async (req, res, next) => {
       sheetDtl = await sheetController.getSheetById(sheetId);
     } else {
       log.info('Call controller function to fetch all sheets from system');
-      sheetDtl = await sheetController.getAllSheets();
+      sheetDtl = await sheetController.getAllSheets(typeId, tagId, page, limit);
     }
     if (!sheetDtl.isValid) {
       throw sheetDtl;
