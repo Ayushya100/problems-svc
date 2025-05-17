@@ -14,7 +14,6 @@ const registerSupportLanguage = async (req, res, next) => {
     const payload = req.body;
     const userId = req.user.id;
     payload.langCode = payload.langCode.toUpperCase();
-    console.log(payload);
 
     log.info('Call controller function to verify if provided sheet type exists');
     const typeExist = await sheetTypeController.getTypeById(payload.typeId);

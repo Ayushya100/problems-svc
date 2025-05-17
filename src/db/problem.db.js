@@ -264,7 +264,7 @@ const getSheetSolutionsById = async (sheetId) => {
   return exec(query, params);
 };
 
-const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset, difficulty) => {
+const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset, difficulty, approved) => {
   let query = `SELECT P.ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.DIFFICULTY`;
   const params = [];
 
@@ -279,7 +279,8 @@ const getAllSheetInfo = async (typeId = null, tagId = null, limit, offset, diffi
     params.push(tagId);
   }
 
-  query += ` WHERE P.IS_DELETED = false AND P.APPROVED = true`;
+  query += ` WHERE P.IS_DELETED = false AND P.APPROVED = ?`;
+  params.push(approved);
 
   if (typeId) {
     query += ` AND P.TYPE_ID = ?`;
@@ -310,6 +311,41 @@ const getTagInfoByCd = async (tagCd, deletedRecord) => {
   const query = `SELECT ID, TAG_CD, TAG_DESC, CORE, CREATED_DATE, MODIFIED_DATE FROM TAGS
     WHERE IS_DELETED = ? AND TAG_CD = ?;`;
   const params = [deletedRecord, tagCd];
+
+  return exec(query, params);
+};
+
+const getPerformanceDtlBySheetId = async (sheetId, deletedRecord) => {
+  const query = `SELECT R.LANGUAGE_ID, R.SOURCE_CODE, R.STATUS, R.COMPILE_OUTPUT, R.RUNTIME_MSG, R.MEMORY_MSG
+    , R.ERROR_MSG, R.MAX_MEMORY, R.MAX_TIME, R.AVG_MEMORY, R.AVG_TIME, U.FIRST_NAME, U.LAST_NAME, R.CREATED_DATE
+    FROM PROBLEM_VALIDATION_RUNS R
+    LEFT JOIN USERS U ON U.ID = R.RUN_BY
+    WHERE R.IS_DELETED = ? AND R.PROBLEM_ID = ?
+    ORDER BY R.CREATED_DATE DESC`;
+  const params = [deletedRecord, sheetId];
+
+  return exec(query, params);
+};
+
+const getSheetCount = async (typeId, tagId, difficulty, approved) => {
+  let query = `SELECT COUNT(*) AS TOTAL FROM PROBLEMS P`;
+  const params = [];
+
+  if (tagId) {
+    query += ` INNER JOIN PROBLEM_TAGS T ON T.PROBLEM_ID = P.ID AND T.IS_DELETED = false AND T.TAG_ID = ?`;
+    params.push(tagId);
+  }
+  query += ` WHERE P.IS_DELETED = false AND P.APPROVED = ?`;
+  params.push(approved);
+
+  if (typeId) {
+    query += ` AND P.TYPE_ID = ?`;
+    params.push(typeId);
+  }
+  if (difficulty) {
+    query += ` AND P.DIFFICULTY = ?`;
+    params.push(difficulty);
+  }
 
   return exec(query, params);
 };
@@ -350,4 +386,6 @@ export {
   getAllSheetInfo,
   getTypeInfoByCode,
   getTagInfoByCd,
+  getPerformanceDtlBySheetId,
+  getSheetCount,
 };

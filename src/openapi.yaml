@@ -295,6 +295,49 @@ components:
         - languageId
         - solution
 
+    performanceDtlData:
+      title: Schema for Solutions Performance Detail
+      type: object
+      properties:
+        languageId:
+          type: string
+          minLength: 30
+        code:
+          type: string
+        status:
+          type: string
+        compileOutput:
+          type: string
+          nullable: true
+        runtimeMsg:
+          type: string
+          nullable: true
+        memoryMsg:
+          type: string
+          nullable: true
+        errorMsg:
+          type: string
+          nullable: true
+        maxMemory:
+          type: string
+        maxTime:
+          type: string
+        avgMemory:
+          type: string
+        avgTime:
+          type: string
+        runBy:
+          type: string
+      required:
+        - languageId
+        - code
+        - status
+        - maxMemory
+        - maxTime
+        - avgMemory
+        - avgTime
+        - runBy
+
     sheetTagsData:
       title: Schema for Sheet Tags
       type: object
@@ -458,6 +501,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/referenceSolutionsData'
+        performanceDtl:
+          type: array
+          items:
+            $ref: '#/components/schemas/performanceDtlData'
       required:
         - id
         - sheetCode
@@ -832,9 +879,35 @@ components:
           type: boolean
           example: true
         data:
-          type: array
-          items:
-            $ref: '#/components/schemas/getAllSheetsResponseData'
+          type: object
+          properties:
+            currentPageItems:
+              type: number
+            limit:
+              type: number
+            page:
+              type: number
+            totalItems:
+              type: number
+            totalPages:
+              type: number
+            nextPage:
+              type: boolean
+            previousPage:
+              type: boolean
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/getAllSheetsResponseData'
+          required:
+            - currentPageItems
+            - limit
+            - page
+            - totalItems
+            - totalPages
+            - nextPage
+            - previousPage
+            - data
       required:
         - statusCode
         - type

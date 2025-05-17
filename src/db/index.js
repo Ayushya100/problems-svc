@@ -36,6 +36,8 @@ import {
   getAllSheetInfo,
   getTypeInfoByCode,
   getTagInfoByCd,
+  getPerformanceDtlBySheetId,
+  getSheetCount,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords } from './problemTrans.db.js';
@@ -78,4 +80,6 @@ export {
   deleteSheetRecords,
   getTypeInfoByCode,
   getTagInfoByCd,
+  getPerformanceDtlBySheetId,
+  getSheetCount,
 };
