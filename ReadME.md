@@ -5,7 +5,7 @@ Welcome to the GitHub repository for **Problems SVC** – This service is respon
 
 ## 📌 Project Status: Under Development
 ### What's Happening Now:
-- The service is currently being developed to support the creation, management, and serving of coding challenges for users across different domains.
+- The service has been created to support the creation, management, and serving of coding challenges for users across different domains.
 
 ## 🚀 Features
 ### Overview
@@ -26,9 +26,49 @@ API routes are secured using bearer tokens and role-based access control. Input 
 
 ## API Endpoints
 ### Health & Utility APIs
-| Method | Endpoint                                               | Description                             |
-| :----- | :----------------------------------------------------- | :-------------------------------------- |
-| GET    | `/problems-svc/api/v1.0/health`                        | Health Check Service                    |
+| Method | Endpoint                                               | Description                              |
+| :----- | :----------------------------------------------------- | :--------------------------------------- |
+| GET    | `/problems-svc/api/v1.0/health`                        | Health Check Service                     |
+
+### Sheet Types APIs
+| Method | Endpoint                                               | Description                              |
+| :----- | :----------------------------------------------------- | :--------------------------------------- |
+| POST   | `/problems-svc/api/v1.0/sheet/type`                    | Register a sheet type                    |
+| GET    | `/problems-svc/api/v1.0/sheet/type`                    | Get all sheet types                      |
+| GET    | `/problems-svc/api/v1.0/sheet/type/:typeId`            | Get sheet type by ID                     |
+| PUT    | `/problems-svc/api/v1.0/sheet/type/:typeId`            | Update sheet type by ID                  |
+| DELETE | `/problems-svc/api/v1.0/sheet/type/:typeId`            | Delete sheet type by ID                  |
+
+### Tags APIs
+| Method | Endpoint                                               | Description                              |
+| :----- | :----------------------------------------------------- | :--------------------------------------- |
+| POST   | `/problems-svc/api/v1.0/tag`                           | Register a tag for sheets                |
+| GET    | `/problems-svc/api/v1.0/tag`                           | Get all tags                             |
+| GET    | `/problems-svc/api/v1.0/tag/:tagId`                    | Get tag info by ID                       |
+| PUT    | `/problems-svc/api/v1.0/tag/:tagId`                    | Update tag by ID                         |
+| DELETE | `/problems-svc/api/v1.0/tag/:tagId`                    | Delete tag by ID                         |
+
+### Support Language APIs
+| Method | Endpoint                                               | Description                              |
+| :----- | :----------------------------------------------------- | :--------------------------------------- |
+| POST   | `/problems-svc/api/v1.0/language`                      | Register a sheet language for sheets     |
+| GET    | `/problems-svc/api/v1.0/language`                      | Get all languages                        |
+| GET    | `/problems-svc/api/v1.0/language/:langId`              | Get language by ID                       |
+| GET    | `/problems-svc/api/v1.0/language/type/:typeId`         | Get language by sheet type ID            |
+| PUT    | `/problems-svc/api/v1.0/language/:langId`              | Update language by ID                    |
+| DELETE | `/problems-svc/api/v1.0/language/:langId`              | Delete language by ID                    |
+
+### Sheet APIs
+| Method | Endpoint                                               | Description                              |
+| :----- | :----------------------------------------------------- | :--------------------------------------- |
+| POST   | `/problems-svc/api/v1.0/sheet`                         | Register a problem sheet record          |
+| GET    | `/problems-svc/api/v1.0/sheet`                         | Get all sheets information               |
+| GET    | `/problems-svc/api/v1.0/sheet/:sheetId`                | Get sheet information by ID              |
+| GET    | `/problems-svc/api/v1.0/sheet/:sheetId/snippet/:langId`| Get sheet snippets by language ID        |
+| GET    | `/problems-svc/api/v1.0/sheet/:sheetId/solution`       | Get sheet reference solutions by sheet ID|
+| GET    | `/problems-svc/api/v1.0/sheet/:sheetId/detail`         | Get sheet details by sheet ID            |
+| PUT    | `/problems-svc/api/v1.0/sheet/:sheetId`                | Update sheet information by ID           |
+| DELETE | `/problems-svc/api/v1.0/sheet/:sheetId`                | Delete sheet information by ID           |
 
 ## 🛠️ Setup Instructions
 
