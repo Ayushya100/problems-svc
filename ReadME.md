@@ -28,6 +28,7 @@ API routes are secured using bearer tokens and role-based access control. Input 
 ### Health & Utility APIs
 | Method | Endpoint                                               | Description                              |
 | :----- | :----------------------------------------------------- | :--------------------------------------- |
+| GET    | `/api-docs/`                                           | View docs for service                    |
 | GET    | `/problems-svc/api/v1.0/health`                        | Health Check Service                     |
 
 ### Sheet Types APIs
