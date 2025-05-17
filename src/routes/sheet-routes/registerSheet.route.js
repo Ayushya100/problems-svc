@@ -42,7 +42,7 @@ const registerSheet = async (req, res, next) => {
     }
 
     log.info('Call controller function to store sheet details in db');
-    const sheetDtl = await sheetController.registerNewSheet(userId, userApproveStatus, payload);
+    const sheetDtl = await sheetController.registerNewSheet(userId, userApproveStatus, payload, solutionValid.data);
     if (!sheetDtl.isValid) {
       throw sheetDtl;
     }

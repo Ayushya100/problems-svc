@@ -2,13 +2,14 @@
 
 import { trxRunner } from 'common-node-lib';
 
-const saveSheetRecords = async (problemPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload) => {
+const saveSheetRecords = async (problemPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload, performanceLog) => {
   const storeMultipleTagsRecord = tagPayload.map(() => '(?, ?)').join(', ');
   const storeMultipleExamplesRecord = examplePayload.map(() => '(?, ?, ?, ?)').join(', ');
   const storeMultipleHintsRecord = hintsPayload.map(() => '(?, ?, ?)').join(', ');
   const storeMultipleTestCasesRecord = testCasesPayload.map(() => '(?, ?, ?, ?)').join(', ');
   const storeMultipleSnippetRecord = snippetPayload.map(() => '(?, ?, ?)').join(', ');
   const storeMultipleSolutionRecord = solutionPayload.map(() => '(?, ?, ?)').join(', ');
+  const storeMultiplePerformanceRecord = performanceLog.map(() => '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ');
 
   const result = await trxRunner(async (execute) => {
     const problemQuery = `INSERT INTO PROBLEMS (TYPE_ID, PROBLEM_CD, PROBLEM_TITLE, PROBLEM_DESC, CONSTRAINTS, DIFFICULTY, APPROVED)
@@ -55,6 +56,13 @@ const saveSheetRecords = async (problemPayload, tagPayload, examplePayload, hint
             VALUES ${storeMultipleSolutionRecord};`;
     const solutionParams = solutionPayload.map((solution) => [problemId, solution.languageId, solution.solution]).flat();
     await execute(solutionQuery, solutionParams);
+
+    const performanceQuery = `INSERT INTO PROBLEM_VALIDATION_RUNS (PROBLEM_ID, LANGUAGE_ID, SOURCE_CODE, STATUS, MAX_MEMORY, MAX_TIME, AVG_MEMORY, AVG_TIME, RUN_BY)
+        VALUES ${storeMultiplePerformanceRecord};`;
+    const performanceParams = performanceLog
+      .map((log) => [problemId, log.langId, log.code, log.status, log.maxMemoConsumption, log.maxTimeConsumption, log.avgMemoConsumption, log.avgTimeConsumption, log.runBy])
+      .flat();
+    await execute(performanceQuery, performanceParams);
 
     return problemResult;
   });

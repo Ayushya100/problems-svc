@@ -134,11 +134,13 @@ const validateSolutions = async (protocol, payload) => {
       };
     });
 
+    const testCaseSubmissionResults = [];
     for (const { languageId, solution } of referenceSolutions) {
       const lang = languageRecords.find((language) => language.id === languageId);
       const judge0Language = lang.langCode;
       const judge0LanguageCode = lang.metadata;
 
+      log.info(`Solution Validation for Language: ${judge0Language} process initiated`);
       if (judge0LanguageCode === null || judge0LanguageCode < 45 || judge0LanguageCode > 74) {
         log.error('Invalid Judge0 ID');
         return {
@@ -171,6 +173,10 @@ const validateSolutions = async (protocol, payload) => {
         base64_encoded: false,
       };
 
+      let maxMemoConsumption = -Infinity;
+      let maxTimeConsumption = -Infinity;
+      let totalMemoConsumption = 0;
+      let totalTimeConsumption = 0;
       const submission = await pollBatchResults(protocol, params);
 
       for (let i = 0; i < submission.length; i++) {
@@ -202,14 +208,29 @@ const validateSolutions = async (protocol, payload) => {
             isValid: false,
           };
         }
+        maxMemoConsumption = Math.max(maxMemoConsumption, submissionResult.memory);
+        maxTimeConsumption = Math.max(maxTimeConsumption, parseFloat(submissionResult.time));
+        totalMemoConsumption = totalMemoConsumption + submissionResult.memory;
+        totalTimeConsumption = parseFloat((totalTimeConsumption + parseFloat(submissionResult.time)).toFixed(3));
       }
+
+      const avgMemoConsumption = totalMemoConsumption / submission.length;
+      const avgTimeConsumption = totalTimeConsumption / submission.length;
+      testCaseSubmissionResults.push({
+        langId: languageId,
+        langCode: lang.langCode,
+        maxMemoConsumption: maxMemoConsumption,
+        maxTimeConsumption: maxTimeConsumption,
+        avgMemoConsumption: avgMemoConsumption,
+        avgTimeConsumption: avgTimeConsumption,
+      });
     }
 
     log.success('Testcases verification completed successfully');
     return {
       status: 200,
       message: 'Solution validation completed',
-      data: {},
+      data: testCaseSubmissionResults,
       isValid: true,
     };
   } catch (err) {
@@ -225,7 +246,7 @@ const validateSolutions = async (protocol, payload) => {
   }
 };
 
-const registerNewSheet = async (userId, userApproveStatus, payload) => {
+const registerNewSheet = async (userId, userApproveStatus, payload, performanceData) => {
   try {
     log.info('Call controller function to store sheet details in db');
     userId = convertPrettyStringToId(userId);
@@ -238,6 +259,23 @@ const registerNewSheet = async (userId, userApproveStatus, payload) => {
       sheetCode = 1;
     } else {
       sheetCode = lastSheetCode.rows[0].problem_cd + 1;
+    }
+
+    const performanceLog = [];
+    for (const perf of performanceData) {
+      let solution = payload.referenceSolutions.filter((ref) => ref.languageId === perf.langId);
+      solution = solution[0].solution;
+
+      performanceLog.push({
+        langId: convertPrettyStringToId(perf.langId),
+        code: solution,
+        status: 'SUCCESS',
+        maxMemoConsumption: parseFloat(perf.maxMemoConsumption.toFixed(3)),
+        maxTimeConsumption: parseFloat(perf.maxTimeConsumption.toFixed(3)),
+        avgMemoConsumption: parseFloat(perf.avgMemoConsumption.toFixed(3)),
+        avgTimeConsumption: parseFloat(perf.avgTimeConsumption.toFixed(3)),
+        runBy: userId,
+      });
     }
 
     const tagPayload = [];
@@ -256,7 +294,6 @@ const registerNewSheet = async (userId, userApproveStatus, payload) => {
       constraints: payload.constraints,
       approved: userApproveStatus,
     };
-    console.log(sheetPayload);
 
     for (const tag of payload.tags) {
       tagPayload.push(tag);
@@ -300,7 +337,7 @@ const registerNewSheet = async (userId, userApproveStatus, payload) => {
     }
 
     log.info('Call register query to store sheet details in db');
-    const sheetInfo = await saveSheetRecords(sheetPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload);
+    const sheetInfo = await saveSheetRecords(sheetPayload, tagPayload, examplePayload, hintsPayload, testCasesPayload, snippetPayload, solutionPayload, performanceLog);
     const sheetId = sheetInfo.rows[0].id;
 
     const newSheetDtl = await getSheetDetailsById(sheetId);

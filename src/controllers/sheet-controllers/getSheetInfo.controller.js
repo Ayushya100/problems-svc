@@ -12,11 +12,20 @@ import {
   getLanguagesByTypeId,
   getSheetSolutionsById,
   getLangInfoById,
+  getPerformanceDtlBySheetId,
+  getSheetCount,
 } from '../../db/index.js';
 
 const log = logger('Controller: get-sheet-type');
 
 const data = {};
+
+const formatMemory = (kb) => {
+  return (kb / 1024).toFixed(2) + ' MB';
+};
+const formatTime = (sec) => {
+  return (sec * 1000).toFixed(0) + ' ms';
+};
 
 const getSheetBasicInfoById = async (sheetId, deletedRecord = false) => {
   try {
@@ -212,6 +221,49 @@ const getSolutionsBySheetId = async (sheetId) => {
   }
 };
 
+const getSheetMetadata = async (typeId, tagId, difficulty, page, limit) => {
+  try {
+    log.info('Call db query to fetch total number of recrods for sheets available');
+    const sheetCount = await getSheetCount(typeId, tagId, difficulty, true);
+    const totalItems = sheetCount.rows[0].total;
+
+    const totalPages = Math.ceil(totalItems / limit);
+    const currentPageItems = Math.min(limit, totalItems - (page - 1) * limit);
+
+    data.currentPageItems = currentPageItems;
+    data.limit = Number(limit);
+    data.page = Number(page);
+    data.totalItems = Number(totalItems);
+    data.totalPages = totalPages;
+    data.nextPage = page < totalPages;
+    data.previousPage = page > 1;
+
+    log.success('Sheets metadata fetched successfully');
+    return {
+      status: 200,
+      message: 'Sheets metadata fetched successfully',
+      data: {
+        currentPageItems: currentPageItems,
+        nextPage: page < totalPages,
+        previousPage: page > 1,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      },
+      isValid: true,
+    };
+  } catch (err) {
+    log.error('An error occurred while fetching sheet metadata from system');
+    return {
+      status: 500,
+      message: 'An error occurred while fetching sheet metadata from system',
+      data: [],
+      errors: err,
+      stack: err.stack,
+      isValid: false,
+    };
+  }
+};
+
 const getSheetById = async (sheetId, deletedRecord = false) => {
   try {
     log.info('Controller function to fetch sheet details for requested id process initiated');
@@ -282,7 +334,7 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
     if (difficulty) {
       difficulty = difficulty.trim();
       difficulty = difficulty[0].toUpperCase() + difficulty.slice(1);
-      
+
       if (difficulty !== 'Easy' && difficulty !== 'Medium' && difficulty !== 'Hard') {
         log.error('Incorrect difficulty type provided');
         return {
@@ -291,18 +343,18 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
           data: [],
           errors: [],
           stack: 'getAllSheets function call',
-          isValid: false
+          isValid: false,
         };
       }
     }
 
     const offset = (page - 1) * limit;
     let sheetDtl = null;
-    let data = [];
+    const sheetData = [];
 
     log.info('Call db queries to fetch sheet details');
     if (tagId) {
-      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty, true);
       if (sheetDtl.rowCount === 0) {
         log.info('No sheet found');
         return {
@@ -315,7 +367,7 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
       sheetDtl = sheetDtl.rows;
 
       for (const sheet of sheetDtl) {
-        data.push({
+        sheetData.push({
           id: convertIdToPrettyString(sheet.id),
           typeId: convertIdToPrettyString(sheet.type_id),
           sheetCode: sheet.problem_cd,
@@ -329,8 +381,14 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
           ],
         });
       }
+
+      const sheetMetadata = await getSheetMetadata(typeId, tagId, difficulty, page, limit);
+      if (!sheetMetadata.isValid) {
+        return sheetMetadata;
+      }
+      data.data = sheetData;
     } else {
-      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty);
+      sheetDtl = await getAllSheetInfo(typeId, tagId, limit, offset, difficulty, true);
       if (sheetDtl.rowCount === 0) {
         log.info('No sheet found');
         return {
@@ -355,7 +413,7 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
           }
         }
 
-        data.push({
+        sheetData.push({
           id: convertIdToPrettyString(sheet.id),
           typeId: convertIdToPrettyString(sheet.type_id),
           sheetCode: sheet.problem_cd,
@@ -364,6 +422,12 @@ const getAllSheets = async (typeId = null, tagId = null, page, limit, difficulty
           tags: tags,
         });
       }
+
+      const sheetMetadata = await getSheetMetadata(typeId, tagId, difficulty, page, limit);
+      if (!sheetMetadata.isValid) {
+        return sheetMetadata;
+      }
+      data.data = sheetData;
     }
 
     log.success('Sheets information retrieved successfully');
@@ -410,6 +474,33 @@ const getSheetDetailsById = async (sheetId, deletedRecord = false) => {
     const sheetSolutionsDtl = await getSolutionsBySheetId(sheetId);
     if (!sheetSolutionsDtl.isValid) {
       throw sheetSolutionsDtl;
+    }
+
+    log.info('Call db query to fetch the performance log for the reference solutions submitted');
+    data.performanceDtl = [];
+    let performanceDtl = await getPerformanceDtlBySheetId(sheetId, false);
+    if (performanceDtl.rowCount > 0) {
+      performanceDtl = performanceDtl.rows;
+      for (const log of performanceDtl) {
+        let name = log.first_name;
+        name = log.last_name ? `${name} ${log.last_name}` : name;
+
+        data.performanceDtl.push({
+          languageId: convertIdToPrettyString(log.language_id),
+          code: log.source_code,
+          status: log.status,
+          compileOutput: log.compile_output,
+          runtimeMsg: log.runtime_msg,
+          memoryMsg: log.memory_msg,
+          errorMsg: log.error_msg,
+          maxMemory: formatMemory(log.max_memory),
+          maxTime: formatTime(log.max_time),
+          avgMemory: formatMemory(log.avg_memory),
+          avgTime: formatTime(log.avg_time),
+          runBy: name,
+          createdDate: convertToNativeTimeZone(log.created_date),
+        });
+      }
     }
 
     log.success('Requested Sheet details fetched successfully');
