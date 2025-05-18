@@ -166,7 +166,7 @@ const isSheetExist = async (title, sheetId) => {
   const params = [title];
 
   if (sheetId) {
-    query += ` ID <> ?;`;
+    query += ` AND ID <> ?;`;
     params.push(sheetId);
   }
   return exec(query, params);

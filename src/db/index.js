@@ -40,7 +40,7 @@ import {
   getSheetCount,
 } from './problem.db.js';
 
-import { saveSheetRecords, deleteSheetRecords } from './problemTrans.db.js';
+import { saveSheetRecords, deleteSheetRecords, updateSheetRecords } from './problemTrans.db.js';
 
 export {
   isSheetExistAvailable,
@@ -82,4 +82,5 @@ export {
   getTagInfoByCd,
   getPerformanceDtlBySheetId,
   getSheetCount,
+  updateSheetRecords,
 };

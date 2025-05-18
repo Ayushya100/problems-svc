@@ -14,6 +14,7 @@ const updateSheetInfo = async (req, res, next) => {
     const sheetId = req.params.sheetId;
     const userId = req.user.id;
     const payload = req.body;
+    const protocol = req.protocol;
 
     if (payload.typeId) {
       log.info('Call controller function to validate if sheet type for the provided id valid');
@@ -30,6 +31,32 @@ const updateSheetInfo = async (req, res, next) => {
         throw sheetExist;
       }
     }
+
+    if (payload.tags) {
+      log.info('Call controller function to validate if provided tags are valid');
+      const tagExist = await sheetController.verifyTagsForSheet(payload.tags);
+      if (!tagExist.isValid) {
+        throw tagExist;
+      }
+    }
+
+    let solutionValid = null;
+    if (payload.referenceSolutions) {
+      log.info('Call controller function to validate reference solutions and test cases for the requested sheet');
+      solutionValid = await sheetController.validateSolutions(protocol, payload);
+      if (!solutionValid.isValid) {
+        throw solutionValid;
+      }
+      solutionValid = solutionValid.data;
+    }
+
+    log.info('Call controller function to update sheet details in system');
+    const sheetDtl = await sheetController.updateSheet(userId, sheetId, payload, solutionValid);
+    if (!sheetDtl.isValid) {
+      throw sheetDtl;
+    }
+
+    res.status(200).json(buildApiResponse(sheetDtl));
   } catch (err) {
     if (err.statusCode === '500') {
       log.error(`Error occurred while processing the request in router. Error: ${JSON.stringify(err)}`);
