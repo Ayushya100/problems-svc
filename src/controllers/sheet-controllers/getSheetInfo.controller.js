@@ -154,12 +154,12 @@ const sheetDetails = async (sheetId, deletedRecord, privateRecords = false) => {
 const getSnippetsById = async (sheetId, deletedRecord, langCode = null) => {
   try {
     log.info('Call db query to fetch sheet snippets for the provided sheet id');
-    data.codeSnippet = [];
+    data.codeSnippets = [];
     let snippetsDtl = await getSheetSnippetsById(sheetId, deletedRecord, langCode);
     if (snippetsDtl.rowCount > 0) {
       snippetsDtl = snippetsDtl.rows;
       for (const snippet of snippetsDtl) {
-        data.codeSnippet.push({
+        data.codeSnippets.push({
           id: convertIdToPrettyString(snippet.snippet_id),
           languageId: convertIdToPrettyString(snippet.language_id),
           snippet: snippet.snippet,
@@ -544,7 +544,7 @@ const getSheetSnippetById = async (sheetId, langId) => {
     const langCode = langDtl.lang_cd;
 
     const snippetDtl = await getSnippetsById(sheetId, false, langCode);
-    if (!snippetDtl.isValid || data.codeSnippet.length === 0) {
+    if (!snippetDtl.isValid || data.codeSnippets.length === 0) {
       return {
         status: 404,
         message: '',
@@ -559,7 +559,7 @@ const getSheetSnippetById = async (sheetId, langId) => {
     return {
       status: 200,
       message: 'Snippet record found',
-      data: data.codeSnippet[0],
+      data: data.codeSnippets[0],
       isValid: true,
     };
   } catch (err) {

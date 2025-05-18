@@ -493,7 +493,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/sheetTestCasesData'
-        codeSnippet:
+        codeSnippets:
           type: array
           items:
             $ref: '#/components/schemas/codeSnippetsData'
@@ -518,7 +518,7 @@ components:
         - examples
         - hints
         - testCases
-        - codeSnippet
+        - codeSnippets
 
     getAllSheetsResponseData:
       title: Schema for retrieving all Sheet Details
@@ -2144,6 +2144,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+    put:
+      operationId: updateSheetDetailById
+      summary: Update Sheet Info by ID
+      description: An API to update the sheet details for requested ID in system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerSheetPayload'
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getSheetByIDResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '408':
+          description: REQUEST_TIMEOUT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestTimeout'
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userAlreadyExist'
+        '415':
+          description: UNSUPPORTED_MEDIA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unsupportedMedia'
+        '422':
+          description: UNPROCESSABLE_CONTENT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unprocessableContent'
         '500':
           description: INTERNAL_SERVER_ERROR
           content:
