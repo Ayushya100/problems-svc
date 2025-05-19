@@ -104,7 +104,6 @@ const deleteSheetRecords = async (sheetId, userId) => {
 };
 
 const updateSheetRecords = async (updatePayloads) => {
-  console.log(updatePayloads);
   const storeMultipleTagsRecord = updatePayloads.insertTagPayload.map(() => '(?, ?)').join(', ');
   const deleteMultipleTagsRecord = updatePayloads.deleteTagPayload.map(() => '?').join(', ');
   const storeMultipleExamplesRecords = updatePayloads.insertExamplePayload.map(() => '(?, ?, ?, ?)').join(', ');

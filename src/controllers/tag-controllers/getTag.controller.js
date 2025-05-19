@@ -11,6 +11,8 @@ const formatTagDtl = (tagDtl) => {
     id: convertIdToPrettyString(tagDtl.id),
     tagCode: tagDtl.tag_cd,
     tagDesc: tagDtl.tag_desc,
+    category: tagDtl.category,
+    metadata: JSON.parse(tagDtl.metadata),
     core: tagDtl.core,
     createdDate: convertToNativeTimeZone(tagDtl.created_date),
     modifiedDate: convertToNativeTimeZone(tagDtl.modified_date),
@@ -59,11 +61,25 @@ const getTagById = async (tagId, deletedRecord = false) => {
   }
 };
 
-const getAllTagInfo = async () => {
+const getAllTagInfo = async (category = null) => {
   try {
     log.info('Controller function to fetch all the tag info from system initiated');
+    if (category) {
+      category = category.trim().toUpperCase();
+
+      if (category !== 'TOPIC' && category !== 'COMPANY') {
+        log.error('Incorrect category query value provided');
+        return {
+          status: 404,
+          message: 'Incorrect category provided',
+          errors: [],
+          isValid: false,
+        };
+      }
+    }
+
     log.info('Call db query to fetch all tags from db');
-    let tagDtl = await getTags();
+    let tagDtl = await getTags(category);
     if (tagDtl.rowCount === 0) {
       log.info('No tag info available to display');
       return {
@@ -80,6 +96,7 @@ const getAllTagInfo = async () => {
         id: convertIdToPrettyString(tag.id),
         tagCode: tag.tag_cd,
         tagDesc: tag.tag_desc,
+        category: tag.category,
       };
     });
 
