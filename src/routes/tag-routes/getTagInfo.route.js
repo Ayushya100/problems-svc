@@ -11,6 +11,7 @@ const getTagInfo = async (req, res, next) => {
   try {
     log.info('Get tag info request process initiated');
     const tagId = req.params.tagId;
+    const category = req.query.category;
     let tagDtl = {};
 
     if (tagId) {
@@ -18,7 +19,7 @@ const getTagInfo = async (req, res, next) => {
       tagDtl = await tagController.getTagById(tagId);
     } else {
       log.info('Call controller function to fetch all the tags available in system');
-      tagDtl = await tagController.getAllTagInfo();
+      tagDtl = await tagController.getAllTagInfo(category);
     }
     if (!tagDtl.isValid) {
       throw tagDtl;

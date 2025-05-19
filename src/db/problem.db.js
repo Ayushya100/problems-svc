@@ -47,26 +47,32 @@ const isTagExist = async (tagCd) => {
   return exec(query, params);
 };
 
-const registerNewTagInfo = async (tagCd, tagDesc) => {
-  const query = `INSERT INTO TAGS (TAG_CD, TAG_DESC)
-    VALUES (?, ?)
+const registerNewTagInfo = async (tagCd, tagDesc, category, metadata) => {
+  const query = `INSERT INTO TAGS (TAG_CD, TAG_DESC, CATEGORY, METADATA)
+    VALUES (?, ?, ?, ?)
     RETURNING ID;`;
-  const params = [tagCd, tagDesc];
+  const params = [tagCd, tagDesc, category, metadata];
 
   return exec(query, params);
 };
 
 const getTagInfoById = async (tagId, deletedRecord) => {
-  const query = `SELECT ID, TAG_CD, TAG_DESC, CORE, CREATED_DATE, MODIFIED_DATE FROM TAGS
+  const query = `SELECT ID, TAG_CD, TAG_DESC, CATEGORY, METADATA, CORE, CREATED_DATE, MODIFIED_DATE FROM TAGS
     WHERE IS_DELETED = ? AND ID = ?;`;
   const params = [deletedRecord, tagId];
 
   return exec(query, params);
 };
 
-const getTags = async () => {
-  const query = `SELECT ID, TAG_CD, TAG_DESC FROM TAGS WHERE IS_DELETED = false;`;
-  return exec(query);
+const getTags = async (category = null) => {
+  let query = `SELECT ID, TAG_CD, TAG_DESC, CATEGORY FROM TAGS WHERE IS_DELETED = false`;
+  const params = [];
+
+  if (category) {
+    query += ` AND CATEGORY = ?;`;
+    params.push(category);
+  }
+  return exec(query, params);
 };
 
 const updateTagInfo = async (payload, userId, tagId) => {

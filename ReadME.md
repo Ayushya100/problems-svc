@@ -3,7 +3,7 @@
 ## 🧩 Introduction
 Welcome to the GitHub repository for **Problems SVC** – This service is responsible for managing DSA and real-world API problems. It provides functionality to create, retrieve, and manage coding challenges and API-based problem definitions, which are later solved by users via dedicated execution engines.
 
-## 📌 Project Status: Under Development
+## 📌 Project Status: Development Completed
 ### What's Happening Now:
 - The service has been created to support the creation, management, and serving of coding challenges for users across different domains.
 

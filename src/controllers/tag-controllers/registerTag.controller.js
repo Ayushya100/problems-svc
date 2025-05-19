@@ -47,7 +47,8 @@ const registerNewTag = async (payload) => {
   try {
     log.info('Controller function to register new tags in system initiated');
     log.info('Call db query to register new tag in system');
-    const newTag = await registerNewTagInfo(payload.tagCode, payload.tagDesc);
+    payload.metadata = JSON.stringify(payload.metadata);
+    const newTag = await registerNewTagInfo(payload.tagCode, payload.tagDesc, payload.category, payload.metadata);
     const newTagId = newTag.rows[0].id;
 
     const newTagDtl = await getTagById(newTagId);
