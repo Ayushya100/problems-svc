@@ -21,7 +21,7 @@ const getSheet = async (req, res, next) => {
     const page = req.query.page || 1;
     let limit = req.query.limit || 10;
 
-    if (req.query.limit && (req.query.limit < 5 || req.query.limit > 20)) {
+    if (req.query.limit && (req.query.limit < 5 || req.query.limit > 50)) {
       limit = 10;
     }
 
