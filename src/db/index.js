@@ -43,6 +43,7 @@ import {
   getPlaylistByReqId,
   getPlaylistInfoForUser,
   updatePlaylistInfo,
+  deletePlaylistInfo,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords, updateSheetRecords } from './problemTrans.db.js';
@@ -93,4 +94,5 @@ export {
   getPlaylistByReqId,
   getPlaylistInfoForUser,
   updatePlaylistInfo,
+  deletePlaylistInfo,
 };

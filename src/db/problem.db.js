@@ -398,6 +398,14 @@ const updatePlaylistInfo = async (userId, playlistId, payload) => {
   return exec(query, params);
 };
 
+const deletePlaylistInfo = async (userId, playlistId) => {
+  const query = `UPDATE PLAYLIST SET IS_DELETED = true, MODIFIED_BY = ?
+    WHERE ID = ? AND USER_ID = ?;`;
+  const params = [userId, playlistId, userId];
+
+  return exec(query, params);
+};
+
 export {
   isSheetExistAvailable,
   registerNewType,
@@ -441,4 +449,5 @@ export {
   getPlaylistByReqId,
   getPlaylistInfoForUser,
   updatePlaylistInfo,
+  deletePlaylistInfo,
 };
