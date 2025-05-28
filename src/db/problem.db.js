@@ -356,6 +356,32 @@ const getSheetCount = async (typeId, tagId, difficulty, approved) => {
   return exec(query, params);
 };
 
+const isPlaylistAvailable = async (userId, name) => {
+  const query = `SELECT ID, PLAYLIST_NAME, PLAYLIST_DESC FROM PLAYLIST
+    WHERE USER_ID = ? AND PLAYLIST_NAME = ? AND IS_DELETED = false;`;
+  const params = [userId, name];
+
+  return exec(query, params);
+};
+
+const registerNewPlaylist = async (userId, payload) => {
+  const query = `INSERT INTO PLAYLIST (USER_ID, PLAYLIST_NAME, PLAYLIST_DESC)
+    VALUES (?, ?, ?)
+    RETURNING ID;`;
+  const params = [userId, payload.name, payload.description];
+
+  return exec(query, params);
+};
+
+const getPlaylistByReqId = async (id, deletedRecord) => {
+  const query = `SELECT ID, USER_ID, PLAYLIST_NAME, PLAYLIST_DESC, CREATED_DATE, MODIFIED_DATE
+    FROM PLAYLIST
+    WHERE ID = ? AND IS_DELETED = ?;`;
+  const params = [id, deletedRecord];
+
+  return exec(query, params);
+};
+
 export {
   isSheetExistAvailable,
   registerNewType,
@@ -394,4 +420,7 @@ export {
   getTagInfoByCd,
   getPerformanceDtlBySheetId,
   getSheetCount,
+  isPlaylistAvailable,
+  registerNewPlaylist,
+  getPlaylistByReqId,
 };
