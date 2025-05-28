@@ -41,6 +41,7 @@ import {
   isPlaylistAvailable,
   registerNewPlaylist,
   getPlaylistByReqId,
+  getPlaylistInfoForUser,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords, updateSheetRecords } from './problemTrans.db.js';
@@ -89,4 +90,5 @@ export {
   isPlaylistAvailable,
   registerNewPlaylist,
   getPlaylistByReqId,
+  getPlaylistInfoForUser,
 };
