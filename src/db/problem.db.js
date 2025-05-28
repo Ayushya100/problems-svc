@@ -373,11 +373,19 @@ const registerNewPlaylist = async (userId, payload) => {
   return exec(query, params);
 };
 
-const getPlaylistByReqId = async (id, deletedRecord) => {
+const getPlaylistByReqId = async (id, userId, deletedRecord) => {
   const query = `SELECT ID, USER_ID, PLAYLIST_NAME, PLAYLIST_DESC, CREATED_DATE, MODIFIED_DATE
     FROM PLAYLIST
-    WHERE ID = ? AND IS_DELETED = ?;`;
-  const params = [id, deletedRecord];
+    WHERE ID = ? AND USER_ID = ? AND IS_DELETED = ?;`;
+  const params = [id, userId, deletedRecord];
+
+  return exec(query, params);
+};
+
+const getPlaylistInfoForUser = async (userId) => {
+  const query = `SELECT ID, USER_ID, PLAYLIST_NAME FROM PLAYLIST
+    WHERE USER_ID = ? AND IS_DELETED = false;`;
+  const params = [userId];
 
   return exec(query, params);
 };
@@ -423,4 +431,5 @@ export {
   isPlaylistAvailable,
   registerNewPlaylist,
   getPlaylistByReqId,
+  getPlaylistInfoForUser,
 };

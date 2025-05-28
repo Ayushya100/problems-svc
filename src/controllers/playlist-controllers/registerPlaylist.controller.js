@@ -50,7 +50,7 @@ const registerUserPlaylist = async (userId, payload) => {
     log.info('Call db query to register new playlist for user');
     const playlist = await registerNewPlaylist(userId, payload);
     const playlistId = playlist.rows[0].id;
-    const playlistDtl = await getPlaylistById(playlistId, false);
+    const playlistDtl = await getPlaylistById(playlistId, userId, false);
 
     log.success('Playlist registered successfully');
     return {
