@@ -261,6 +261,15 @@ components:
           description: Description
           minLength: 1
 
+    assignSheetsToPlaylistPayload:
+      type: object
+      properties:
+        sheet:
+          type: string
+          minLength: 30
+      required:
+        - sheet
+
     sheetExampleData:
       title: Schema for Sheet Example Data
       type: object
@@ -411,6 +420,26 @@ components:
         - id
         - input
         - output
+
+    assignSheetToPlaylistData:
+      title: Schema for sheets details assigned to the Playlist
+      type: object
+      properties:
+        id:
+          type: string
+        sheetCode:
+          type: number
+        title:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/sheetTagsData'
+      required:
+        - id
+        - sheetCode
+        - title
+        - tags
 
     healthCheckData:
       title: Schema for Health Check Data
@@ -635,6 +664,35 @@ components:
         - id
         - userId
         - name
+
+    assignSheetToPlaylistResponseData:
+      title: Schema for retrieving assigned Sheet Details
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        createdDate:
+          type: string
+        modifiedDate:
+          type: string
+        sheets:
+          type: array
+          items:
+            $ref: '#/components/schemas/assignSheetToPlaylistData'
+      required:
+        - id
+        - userId
+        - name
+        - description
+        - createdDate
+        - modifiedDate
+        - sheets
 
     healthCheckSuccessResponse:
       type: object
@@ -1144,6 +1202,35 @@ components:
           example: true
         data:
           type: array
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    assignSheetToPlaylistByIDResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/assignSheetToPlaylistResponseData'
       required:
         - statusCode
         - type
@@ -2822,6 +2909,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/deletePlaylistByIDResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+  /playlist/assign/{playlistId}:
+    put:
+      operationId: assignSheetsToPlaylistById
+      summary: Assign Sheets to Playlist by ID
+      description: An API to assign the provided sheets to the requested playlist.
+      parameters:
+        - $ref: '#/components/parameters/playlistIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/assignSheetsToPlaylistPayload'
+      responses:
+        '201':
+          description: REQUEST_COMPLETED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/assignSheetToPlaylistByIDResponse'
         '400':
           description: BAD_REQUEST
           content:

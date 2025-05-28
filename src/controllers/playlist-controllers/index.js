@@ -4,6 +4,8 @@ import { verifyPlalist, registerUserPlaylist } from './registerPlaylist.controll
 import { getPlaylistById, getAllPlaylist } from './getPlaylist.controller.js';
 import { updatePlaylistDetails } from './updatePlaylistById.controller.js';
 import { deletePlaylistDetails } from './deletePlaylistInfo.controller.js';
+import { assignSheets } from './assignSheetsToPlaylist.controller.js';
+import { getAssignedSheetsByPlaylistId } from './getAssignment.controller.js';
 
 export default {
   verifyPlalist,
@@ -12,4 +14,6 @@ export default {
   getAllPlaylist,
   updatePlaylistDetails,
   deletePlaylistDetails,
+  assignSheets,
+  getAssignedSheetsByPlaylistId,
 };

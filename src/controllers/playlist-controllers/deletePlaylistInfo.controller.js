@@ -24,10 +24,10 @@ const deletePlaylistDetails = async (userId, playlistId) => {
     if (err.status && err.message) {
       throw err;
     }
-    log.error('Error occurred while validating the sheet information for provided sheet id');
+    log.error('Error occurred while deleting the playlist information for provided id');
     throw {
       status: 500,
-      message: 'An error occurred while retrieving problem statement',
+      message: 'An error occurred while deleting the playlist',
       errors: err,
     };
   }

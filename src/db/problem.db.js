@@ -406,6 +406,31 @@ const deletePlaylistInfo = async (userId, playlistId) => {
   return exec(query, params);
 };
 
+const verifySheetAssignedToPlaylist = async (playlistId, sheetId) => {
+  const query = `SELECT ID FROM PLAYLIST_ITEMS WHERE PLAYLIST_ID = ? AND PROBLEM_ID = ? AND IS_DELETED = false;`;
+  const params = [playlistId, sheetId];
+  return exec(query, params);
+};
+
+const assignSheetToPlaylist = async (playlistId, sheetId, userId) => {
+  const query = `INSERT INTO PLAYLIST_ITEMS (PLAYLIST_ID, PROBLEM_ID, CREATED_BY, MODIFIED_BY)
+    VALUES (?, ?, ?, ?)
+    RETURNING ID;`;
+  const params = [playlistId, sheetId, userId, userId];
+
+  return exec(query, params);
+};
+
+const getAssignSheetById = async (assignmentId) => {
+  const query = `SELECT I.ID, I.PROBLEM_ID, P.PROBLEM_CD, P.PROBLEM_TITLE
+    FROM PLAYLIST_ITEMS I
+    INNER JOIN PROBLEMS P ON P.ID = I.PROBLEM_ID
+    WHERE I.ID = ? AND I.IS_DELETED = false;`;
+  const params = [assignmentId];
+
+  return exec(query, params);
+};
+
 export {
   isSheetExistAvailable,
   registerNewType,
@@ -450,4 +475,7 @@ export {
   getPlaylistInfoForUser,
   updatePlaylistInfo,
   deletePlaylistInfo,
+  verifySheetAssignedToPlaylist,
+  assignSheetToPlaylist,
+  getAssignSheetById,
 };
