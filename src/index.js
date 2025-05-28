@@ -51,6 +51,7 @@ class ProblemService extends Service {
     this.app.post(`${PROBLEMS_API}/playlist`, verifyScope('PLAYLIST.U'), routes.playlist.registerPlaylist);
     this.app.get(`${PROBLEMS_API}/playlist`, verifyScope('PLAYLIST.V'), routes.playlist.getPlaylist);
     this.app.get(`${PROBLEMS_API}/playlist/:playlistId`, verifyScope('PLAYLIST.V'), routes.playlist.getPlaylist);
+    this.app.put(`${PROBLEMS_API}/playlist/:playlistId`, verifyScope('PLAYLIST.U'), routes.playlist.updatePlaylistById);
   }
 }
 

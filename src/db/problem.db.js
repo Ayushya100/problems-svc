@@ -390,6 +390,14 @@ const getPlaylistInfoForUser = async (userId) => {
   return exec(query, params);
 };
 
+const updatePlaylistInfo = async (userId, playlistId, payload) => {
+  const query = `UPDATE PLAYLIST SET PLAYLIST_NAME = ?, PLAYLIST_DESC = ?, MODIFIED_BY = ?
+    WHERE ID = ?;`;
+  const params = [payload.name, payload.description, userId, playlistId];
+
+  return exec(query, params);
+};
+
 export {
   isSheetExistAvailable,
   registerNewType,
@@ -432,4 +440,5 @@ export {
   registerNewPlaylist,
   getPlaylistByReqId,
   getPlaylistInfoForUser,
+  updatePlaylistInfo,
 };
