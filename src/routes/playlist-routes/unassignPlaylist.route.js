@@ -7,9 +7,9 @@ const log = logger('Router: assign-sheets-playlist');
 const playlistController = controllers.playlistController;
 
 // API Function
-const assignSheetToPlaylist = async (req, res, next) => {
+const unassignSheetToPlaylist = async (req, res, next) => {
   try {
-    log.info('Assign sheet to the playlist for requested ID process initiated');
+    log.info('Unassign sheet from the playlist for requested ID process initiated');
     const payload = req.body;
     const playlistId = req.params.playlistId;
     const userId = req.user.id;
@@ -18,10 +18,10 @@ const assignSheetToPlaylist = async (req, res, next) => {
     const playlistDtl = await playlistController.getPlaylistById(playlistId, userId);
 
     log.info('Call controller function to assign sheets to the playlist');
-    const sheetAssignmentDtl = await playlistController.assignSheets(userId, playlistId, payload.sheet);
+    const sheetAssignmentDtl = await playlistController.unassignSheets(userId, playlistId, payload.sheet);
 
     log.success('Playlist assignment for requested playlist process completed successfully');
-    res.status(201).json(buildApiResponse(sheetAssignmentDtl));
+    res.status(200).json(buildApiResponse(sheetAssignmentDtl));
   } catch (err) {
     if (err.statusCode === '500') {
       log.error(`Error occurred while processing the request in router. Error: ${JSON.stringify(err)}`);
@@ -32,4 +32,4 @@ const assignSheetToPlaylist = async (req, res, next) => {
   }
 };
 
-export default assignSheetToPlaylist;
+export default unassignSheetToPlaylist;

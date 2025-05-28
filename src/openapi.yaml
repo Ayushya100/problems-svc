@@ -1239,6 +1239,34 @@ components:
         - success
         - data
 
+    unassignSheetFromPlaylistByIDResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 201
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
     noContentResponse:
       type: object
       properties:
@@ -2960,6 +2988,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/assignSheetToPlaylistByIDResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+    delete:
+      operationId: unassignSheetsFromPlaylistById
+      summary: Unassign Sheets from Playlist by ID
+      description: An API to unassign the provided sheets to the requested playlist.
+      parameters:
+        - $ref: '#/components/parameters/playlistIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/assignSheetsToPlaylistPayload'
+      responses:
+        '200':
+          description: SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unassignSheetFromPlaylistByIDResponse'
         '400':
           description: BAD_REQUEST
           content:
