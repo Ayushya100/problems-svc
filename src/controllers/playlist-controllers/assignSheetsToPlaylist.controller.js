@@ -1,7 +1,7 @@
 'use strict';
 
 import { convertPrettyStringToId, logger } from 'common-node-lib';
-import { verifySheetAssignedToPlaylist, getSheetInfoById, assignSheetToPlaylist } from '../../db/index.js';
+import { verifySheetAssignedToPlaylist, getSheetInfoById, assignSheetToPlaylist, unassignSheetFromPlaylist } from '../../db/index.js';
 import { getAssignedSheetsByPlaylistId } from './getAssignment.controller.js';
 import { getPlaylistById } from './getPlaylist.controller.js';
 
@@ -103,4 +103,46 @@ const assignSheets = async (userId, playlistId, sheetId) => {
   }
 };
 
-export { assignSheets };
+const unassignSheets = async (userId, playlistId, sheetId) => {
+  try {
+    log.info('Controller function to unassign the sheets to the playlist operation initiated');
+    userId = convertPrettyStringToId(userId);
+    playlistId = convertPrettyStringToId(playlistId);
+    sheetId = convertPrettyStringToId(sheetId);
+
+    log.info('Validate requested sheet exists');
+    await verifySheets(sheetId);
+
+    log.info('Validate if sheet assigned');
+    const sheetAssignment = await verifySheetAssigned(playlistId, sheetId);
+    if (!sheetAssignment) {
+      log.error('Sheet not assigned to the playlist');
+      throw {
+        status: 400,
+        message: 'Problem not assigned to the playlist',
+      };
+    }
+
+    log.info('Call db query to unassign sheet from the playlist');
+    await unassignSheetFromPlaylist(playlistId, sheetId, userId);
+
+    log.success('Sheet unassigned from playlist successfully');
+    return {
+      status: 200,
+      message: 'Problem unassigned successfully',
+      data: {},
+    };
+  } catch (err) {
+    if (err.status && err.message) {
+      throw err;
+    }
+    log.error('Error occurred while unassigning sheets to the provided playlist');
+    throw {
+      status: 500,
+      message: 'An error occurred while unassigning sheets to the playlist',
+      errors: err,
+    };
+  }
+};
+
+export { assignSheets, unassignSheets };

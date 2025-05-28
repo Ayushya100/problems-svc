@@ -431,6 +431,14 @@ const getAssignSheetById = async (assignmentId) => {
   return exec(query, params);
 };
 
+const unassignSheetFromPlaylist = async (playlistId, sheetId, userId) => {
+  const query = `UPDATE PLAYLIST_ITEMS SET IS_DELETED = true, MODIFIED_BY = ?
+    WHERE PLAYLIST_ID = ? AND PROBLEM_ID = ?;`;
+  const params = [userId, playlistId, sheetId];
+
+  return exec(query, params);
+};
+
 export {
   isSheetExistAvailable,
   registerNewType,
@@ -478,4 +486,5 @@ export {
   verifySheetAssignedToPlaylist,
   assignSheetToPlaylist,
   getAssignSheetById,
+  unassignSheetFromPlaylist,
 };

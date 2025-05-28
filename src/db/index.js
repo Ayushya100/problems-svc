@@ -47,6 +47,7 @@ import {
   verifySheetAssignedToPlaylist,
   assignSheetToPlaylist,
   getAssignSheetById,
+  unassignSheetFromPlaylist,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords, updateSheetRecords } from './problemTrans.db.js';
@@ -101,4 +102,5 @@ export {
   verifySheetAssignedToPlaylist,
   assignSheetToPlaylist,
   getAssignSheetById,
+  unassignSheetFromPlaylist,
 };
