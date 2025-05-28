@@ -3,7 +3,7 @@
 import { logger, buildApiResponse } from 'common-node-lib';
 import controllers from '../../controllers/index.js';
 
-const log = logger('Router: register-playlist');
+const log = logger('Router: fetch-playlist-details');
 const playlistController = controllers.playlistController;
 
 // API Function

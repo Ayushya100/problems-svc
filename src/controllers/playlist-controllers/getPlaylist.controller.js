@@ -3,7 +3,7 @@
 import { convertIdToPrettyString, convertPrettyStringToId, convertToNativeTimeZone, logger } from 'common-node-lib';
 import { getPlaylistByReqId, getPlaylistInfoForUser } from '../../db/index.js';
 
-const log = logger('Controller: get-playlist');
+const log = logger('Controller: fetch-playlist');
 
 const getPlaylistById = async (playlistId, userId, deletedRecords = false) => {
   try {
