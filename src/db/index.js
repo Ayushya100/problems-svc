@@ -38,6 +38,9 @@ import {
   getTagInfoByCd,
   getPerformanceDtlBySheetId,
   getSheetCount,
+  isPlaylistAvailable,
+  registerNewPlaylist,
+  getPlaylistByReqId,
 } from './problem.db.js';
 
 import { saveSheetRecords, deleteSheetRecords, updateSheetRecords } from './problemTrans.db.js';
@@ -83,4 +86,7 @@ export {
   getPerformanceDtlBySheetId,
   getSheetCount,
   updateSheetRecords,
+  isPlaylistAvailable,
+  registerNewPlaylist,
+  getPlaylistByReqId,
 };

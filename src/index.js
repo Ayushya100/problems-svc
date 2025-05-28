@@ -46,6 +46,9 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/sheet/:sheetId/detail`, verifyScope('SHEET.V'), routes.sheet.getSheetDetails);
     this.app.put(`${PROBLEMS_API}/sheet/:sheetId`, verifyScope('SHEET.U'), routes.sheet.updateSheetInfo);
     this.app.delete(`${PROBLEMS_API}/sheet/:sheetId`, verifyScope('SHEET.D'), routes.sheet.deleteSheetInfo);
+
+    // Playlist
+    this.app.post(`${PROBLEMS_API}/playlist`, verifyScope('PLAYLIST.U'), routes.playlist.registerPlaylist);
   }
 }
 
