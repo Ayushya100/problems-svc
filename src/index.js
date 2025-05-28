@@ -53,6 +53,7 @@ class ProblemService extends Service {
     this.app.get(`${PROBLEMS_API}/playlist/:playlistId`, verifyScope('PLAYLIST.V'), routes.playlist.getPlaylist);
     this.app.put(`${PROBLEMS_API}/playlist/:playlistId`, verifyScope('PLAYLIST.U'), routes.playlist.updatePlaylistById);
     this.app.delete(`${PROBLEMS_API}/playlist/:playlistId`, verifyScope('PLAYLIST.D'), routes.playlist.deletePlaylistByID);
+    this.app.put(`${PROBLEMS_API}/playlist/assign/:playlistId`, verifyScope('PLAYLIST.U'), routes.playlist.assignSheetToPlaylist);
   }
 }
 

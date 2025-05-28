@@ -28,10 +28,10 @@ const updatePlaylistDetails = async (userId, playlistId, payload, existingPlayli
     if (err.status && err.message) {
       throw err;
     }
-    log.error('Error occurred while validating the sheet information for provided sheet id');
+    log.error('Error occurred while updating the sheet information for provided sheet id');
     throw {
       status: 500,
-      message: 'An error occurred while retrieving problem statement',
+      message: 'An error occurred while updating sheet details',
       errors: err,
     };
   }
