@@ -422,7 +422,7 @@ const assignSheetToPlaylist = async (playlistId, sheetId, userId) => {
 };
 
 const getAssignSheetById = async (assignmentId) => {
-  const query = `SELECT I.ID, I.PROBLEM_ID, P.PROBLEM_CD, P.PROBLEM_TITLE
+  const query = `SELECT I.ID, I.PROBLEM_ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.DIFFICULTY
     FROM PLAYLIST_ITEMS I
     INNER JOIN PROBLEMS P ON P.ID = I.PROBLEM_ID
     WHERE I.ID = ? AND I.IS_DELETED = false;`;
@@ -436,6 +436,28 @@ const unassignSheetFromPlaylist = async (playlistId, sheetId, userId) => {
     WHERE PLAYLIST_ID = ? AND PROBLEM_ID = ?;`;
   const params = [userId, playlistId, sheetId];
 
+  return exec(query, params);
+};
+
+const getAllAssignedSheetsByPlaylistId = async (playlistId, userId, limit, offset) => {
+  const query = `SELECT I.ID, I.PROBLEM_ID, P.TYPE_ID, P.PROBLEM_CD, P.PROBLEM_TITLE, P.DIFFICULTY
+    FROM PLAYLIST L
+    INNER JOIN PLAYLIST_ITEMS I ON I.PLAYLIST_ID = L.ID AND I.IS_DELETED = false
+    INNER JOIN PROBLEMS P ON P.ID = I.PROBLEM_ID AND P.IS_DELETED = false
+    WHERE L.ID = ? AND L.USER_ID = ? AND L.IS_DELETED = false
+    ORDER BY P.PROBLEM_CD
+    LIMIT ? OFFSET ?`;
+  const params = [playlistId, userId, limit, offset];
+
+  return exec(query, params);
+};
+
+const getSheetCountByPlaylist = async (playlistId, userId) => {
+  const query = `SELECT COUNT(I.*) AS TOTAL
+    FROM PLAYLIST L
+    INNER JOIN PLAYLIST_ITEMS I ON I.PLAYLIST_ID = L.ID AND I.IS_DELETED = false
+    WHERE L.ID = ? AND L.USER_ID = ? AND L.IS_DELETED = false;`;
+  const params = [playlistId, userId];
   return exec(query, params);
 };
 
@@ -487,4 +509,6 @@ export {
   assignSheetToPlaylist,
   getAssignSheetById,
   unassignSheetFromPlaylist,
+  getAllAssignedSheetsByPlaylistId,
+  getSheetCountByPlaylist,
 };

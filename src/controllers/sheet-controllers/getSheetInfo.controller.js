@@ -223,7 +223,7 @@ const getSolutionsBySheetId = async (sheetId) => {
 
 const getSheetMetadata = async (typeId, tagId, difficulty, page, limit) => {
   try {
-    log.info('Call db query to fetch total number of recrods for sheets available');
+    log.info('Call db query to fetch total number of records for sheets available');
     const sheetCount = await getSheetCount(typeId, tagId, difficulty, true);
     const totalItems = sheetCount.rows[0].total;
 
