@@ -427,9 +427,13 @@ components:
       properties:
         id:
           type: string
+        typeId:
+          type: string
         sheetCode:
           type: number
         title:
+          type: string
+        difficulty:
           type: string
         tags:
           type: array
@@ -437,8 +441,10 @@ components:
             $ref: '#/components/schemas/sheetTagsData'
       required:
         - id
+        - typeId
         - sheetCode
         - title
+        - difficulty
         - tags
 
     healthCheckData:
@@ -693,6 +699,38 @@ components:
         - createdDate
         - modifiedDate
         - sheets
+
+    getAllAssignSheetToPlaylistResponseData:
+      title: Schema for retrieving all assigned sheets to playlist details
+      type: object
+      properties:
+        currentPageItems:
+          type: number
+        limit:
+          type: number
+        page:
+          type: number
+        totalItems:
+          type: number
+        totalPages:
+          type: number
+        nextPage:
+          type: boolean
+        previousPage:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/assignSheetToPlaylistData'
+      required:
+        - currentPageItems
+        - limit
+        - page
+        - totalItems
+        - totalPages
+        - nextPage
+        - previousPage
+        - data
 
     healthCheckSuccessResponse:
       type: object
@@ -1259,6 +1297,35 @@ components:
           example: true
         data:
           type: object
+      required:
+        - statusCode
+        - type
+        - message
+        - devMessage
+        - success
+        - data
+
+    getAllAssignSheetToPlaylistResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        type:
+          type: string
+          example: 'SUCCESS'
+        message:
+          type: string
+          example: 'Success'
+        devMessage:
+          type: string
+          example: 'Success'
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          $ref: '#/components/schemas/getAllAssignSheetToPlaylistResponseData'
       required:
         - statusCode
         - type
@@ -3038,6 +3105,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/unassignSheetFromPlaylistByIDResponse'
+        '400':
+          description: BAD_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequestResponse'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unauthorizedResponse'
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forbiddenResponse'
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notFound'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalServerErrorResponse'
+
+    get:
+      operationId: assignedSheetsForPlaylistById
+      summary: Assigned Sheets for Playlist by ID
+      description: An API to fetch the assigned sheets for the requested playlist by ID
+      parameters:
+        - $ref: '#/components/parameters/playlistIdParam'
+        - in: query
+          name: page
+          schema:
+            type: string
+          required: false
+          description: Filter sheets by page number
+        - in: query
+          name: limit
+          schema:
+            type: string
+          required: false
+          description: Filter sheets by page limit
+      responses:
+        '200':
+          description: SUMMARY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllAssignSheetToPlaylistResponse'
+        '204':
+          description: CONTENT_NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/noContentResponse'
         '400':
           description: BAD_REQUEST
           content:

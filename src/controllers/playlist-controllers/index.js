@@ -5,7 +5,7 @@ import { getPlaylistById, getAllPlaylist } from './getPlaylist.controller.js';
 import { updatePlaylistDetails } from './updatePlaylistById.controller.js';
 import { deletePlaylistDetails } from './deletePlaylistInfo.controller.js';
 import { assignSheets, unassignSheets } from './assignSheetsToPlaylist.controller.js';
-import { getAssignedSheetsByPlaylistId } from './getAssignment.controller.js';
+import { getAssignedSheetsByPlaylistId, fetchAssignedSheets } from './getAssignment.controller.js';
 
 export default {
   verifyPlalist,
@@ -17,4 +17,5 @@ export default {
   assignSheets,
   getAssignedSheetsByPlaylistId,
   unassignSheets,
+  fetchAssignedSheets,
 };

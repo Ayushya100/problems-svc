@@ -6,6 +6,7 @@ import updatePlaylistById from './updatePlaylistById.route.js';
 import deletePlaylistByID from './deletePlaylistById.route.js';
 import assignSheetToPlaylist from './assignPlaylist.route.js';
 import unassignSheetToPlaylist from './unassignPlaylist.route.js';
+import getAssignedSheetsToPlaylist from './getAssignPlaylist.route.js';
 
 export default {
   registerPlaylist,
@@ -14,4 +15,5 @@ export default {
   deletePlaylistByID,
   assignSheetToPlaylist,
   unassignSheetToPlaylist,
+  getAssignedSheetsToPlaylist,
 };
